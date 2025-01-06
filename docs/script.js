@@ -29,6 +29,8 @@ $(document).ready(function() {
                 //Mostrar los datos en consola
                 console.log("Contenido del fichero CSV:");
                 console.log(content);
+                console.log("Contenido del array:");
+                console.log(csvContent);
             }
         });
     }
@@ -37,7 +39,7 @@ $(document).ready(function() {
     function parseCSV(content) {
         const lines = content.split('\n');
         const result = [];
-        lines.forEach(line => {
+        lines.slice(2).forEach(line => {
             const fields = line.split(';');
             if (fields.length > 1) {
                 result.push({
