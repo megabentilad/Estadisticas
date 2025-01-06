@@ -68,6 +68,21 @@ $(document).ready(function() {
         });
     }
 
+    //Limpiar los campos del formulario
+    function cleanFormInputs() {
+        $('#despertar').val("");
+        $('#comida').val("");
+        $('#cagar').val("");
+        $('#ducha').val("");
+        $('#afeitar').val("");
+        $('#ejercicio').val("");
+        $('#pajas').val("");
+        $('#dormir').val("");
+        $('#mood').val("");
+        $('#fatiga').val("");
+        $('#otros').val("");
+    }
+
     // Mostrar formularios
     $('#create-report').click(function() {
         $('#choose-action').hide();
@@ -186,6 +201,8 @@ $(document).ready(function() {
                 alert('Reporte guardado con éxito');
                 $('#report-form').hide();
                 $('#choose-action').show();
+                loadCSVContent();
+                cleanFormInputs();
             },
             error: function(response) {
                 console.log(response);
