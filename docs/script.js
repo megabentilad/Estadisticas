@@ -47,12 +47,13 @@ $(document).ready(function() {
                     cagar: fields[3],
                     ducha: fields[4],
                     afeitar: fields[5],
-                    ejercicio: fields[6],
-                    pajas: fields[7],
-                    dormir: fields[8],
-                    mood: fields[9],
-                    fatiga: fields[10],
-                    otros: fields[11]
+                    peso: fields[6],
+                    ejercicio: fields[7],
+                    pajas: fields[8],
+                    dormir: fields[9],
+                    mood: fields[10],
+                    fatiga: fields[11],
+                    otros: fields[12]
                 });
             }
         });
@@ -75,6 +76,7 @@ $(document).ready(function() {
         $('#cagar').val("");
         $('#ducha').val("");
         $('#afeitar').val("");
+        $('#peso').val("");
         $('#ejercicio').val("");
         $('#pajas').val("");
         $('#dormir').val("");
@@ -123,6 +125,7 @@ $(document).ready(function() {
             $('#cagar').val(report.cagar);
             $('#ducha').val(report.ducha);
             $('#afeitar').val(report.afeitar);
+            $('#peso').val(report.peso);
             $('#ejercicio').val(report.ejercicio);
             $('#pajas').val(report.pajas);
             $('#dormir').val(report.dormir);
@@ -149,12 +152,13 @@ $(document).ready(function() {
             cagar: formData[2].value,
             ducha: formData[3].value,
             afeitar: formData[4].value,
-            ejercicio: formData[5].value,
-            pajas: formData[6].value,
-            dormir: formData[7].value,
-            mood: formData[8].value,
-            fatiga: formData[9].value,
-            otros: formData[10].value
+            peso: formData[5].value,
+            ejercicio: formData[6].value,
+            pajas: formData[7].value,
+            dormir: formData[8].value,
+            mood: formData[9].value,
+            fatiga: formData[10].value,
+            otros: formData[11].value
         };
     
         // Actualizar el CSV con la nueva o modificada entrada
