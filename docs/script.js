@@ -1,5 +1,6 @@
 $(document).ready(function() {
-    const currentDate = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');
+    const currentDate = new Date().toLocaleDateString('ko-KR').replace(/\//g, '-');           //yyyy-mm-dd
+    //const currentDateSpain = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');    //dd-mm-yyyy
     const token1 = 'github_pat_11ANGJOYQ0PUIqeOOMF0hN_HfOdAxeQaRlVp';
     const token2 = 'UGGupWLRGLWZeXcIUlNFcFKRWtgD2lACAO4GQ5IfqGPs6f';
     const token = token1 + token2;
@@ -24,6 +25,9 @@ $(document).ready(function() {
                 csvContent = parseCSV(content);
                 // Cargar las fechas disponibles para modificar reportes
                 loadAvailableDates();
+
+                //Mostrar los datos en consola
+                console.log(content);
             }
         });
     }
