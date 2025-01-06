@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte Diario</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de Reportes Diarios</h1>
+        <div id="choose-action">
+            <button id="create-report">Crear Nuevo Reporte</button>
+            <button id="modify-report">Modificar Reporte</button>
+        </div>
+
+        <div id="report-form" style="display:none;">
+            <h2>Formulario de Reporte</h2>
+            <form id="report-form-fields">
+                <label for="fecha">Fecha (DD/MM/YYYY):</label>
+                <input type="text" id="fecha" name="fecha" readonly><br><br>
+
+                <label for="despertar">Despertar:</label>
+                <input type="text" id="despertar" name="despertar"><br><br>
+
+                <label for="comida">Comida:</label>
+                <input type="text" id="comida" name="comida"><br><br>
+
+                <label for="cagar">Cagar:</label>
+                <input type="text" id="cagar" name="cagar"><br><br>
+
+                <label for="ducha">Ducha:</label>
+                <input type="text" id="ducha" name="ducha"><br><br>
+
+                <label for="afeitar">Afeitar:</label>
+                <input type="text" id="afeitar" name="afeitar"><br><br>
+
+                <label for="ejercicio">Ejercicio:</label>
+                <input type="text" id="ejercicio" name="ejercicio"><br><br>
+
+                <label for="pajas">Pajas:</label>
+                <input type="text" id="pajas" name="pajas"><br><br>
+
+                <label for="dormir">Dormir:</label>
+                <input type="text" id="dormir" name="dormir"><br><br>
+
+                <label for="mood">Mood:</label>
+                <input type="text" id="mood" name="mood"><br><br>
+
+                <label for="fatiga">Fatiga:</label>
+                <input type="text" id="fatiga" name="fatiga"><br><br>
+
+                <label for="otros">Otros:</label>
+                <input type="text" id="otros" name="otros"><br><br>
+
+                <button type="submit" id="save-report">Guardar Reporte</button>
+            </form>
+        </div>
+
+        <div id="modify-form" style="display:none;">
+            <h2>Modificar Reporte</h2>
+            <label for="select-date">Selecciona una fecha:</label>
+            <select id="select-date"></select><br><br>
+            <button id="load-report">Cargar Reporte</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
