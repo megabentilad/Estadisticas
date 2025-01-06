@@ -1,6 +1,6 @@
 $(document).ready(function() {
     const baseDate = new Date();
-    const currentDate = currentDate.getFullYear() + '-' + ('0' + (currentDate.getMonth() + 1)).slice(-2) + '-' + ('0' + currentDate.getDate()).slice(-2);
+    const currentDate = baseDate.getFullYear() + '-' + ('0' + (baseDate.getMonth() + 1)).slice(-2) + '-' + ('0' + baseDate.getDate()).slice(-2);
     const token1 = 'github_pat_11ANGJOYQ0PUIqeOOMF0hN_HfOdAxeQaRlVp';
     const token2 = 'UGGupWLRGLWZeXcIUlNFcFKRWtgD2lACAO4GQ5IfqGPs6f';
     const token = token1 + token2;
@@ -27,6 +27,7 @@ $(document).ready(function() {
                 loadAvailableDates();
 
                 //Mostrar los datos en consola
+                console.log("Contenido del fichero CSV:");
                 console.log(content);
             }
         });
