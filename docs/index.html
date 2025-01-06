@@ -15,11 +15,12 @@
             <button id="modify-report">Modificar Reporte</button>
         </div>
 
+        <!-- Formulario para crear o modificar reporte -->
         <div id="report-form" style="display:none;">
             <h2>Formulario de Reporte</h2>
             <form id="report-form-fields">
                 <label for="fecha">Fecha (DD/MM/YYYY):</label>
-                <input type="text" id="fecha" name="fecha" readonly><br><br>
+                <input type="date" id="fecha" name="fecha"><br><br>
 
                 <label for="despertar">Despertar:</label>
                 <input type="text" id="despertar" name="despertar"><br><br>
@@ -55,14 +56,17 @@
                 <input type="text" id="otros" name="otros"><br><br>
 
                 <button type="submit" id="save-report">Guardar Reporte</button>
+                <button type="button" id="back-to-selector">Volver</button>
             </form>
         </div>
 
+        <!-- Modificar reporte -->
         <div id="modify-form" style="display:none;">
             <h2>Modificar Reporte</h2>
             <label for="select-date">Selecciona una fecha:</label>
-            <select id="select-date"></select><br><br>
+            <input type="date" id="select-date" name="select-date"><br><br>
             <button id="load-report">Cargar Reporte</button>
+            <button type="button" id="back-to-selector-modify">Volver</button>
         </div>
     </div>
 
