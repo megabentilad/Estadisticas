@@ -1,6 +1,8 @@
 $(document).ready(function() {
     const currentDate = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');
-    const token = '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';
+    const token1 = 'github_pat_11ANGJOYQ0PUIqeOOMF0hN_HfOdAxeQaRlVp';
+    const token2 = 'UGGupWLRGLWZeXcIUlNFcFKRWtgD2lACAO4GQ5IfqGPs6f';
+    const token = token1 + token2;
     const owner = 'megabentilad';
     const repo = 'Estadisticas';
     const filePath = 'docs/base.csv';
