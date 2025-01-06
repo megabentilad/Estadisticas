@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    const currentDate = new Date().toLocaleDateString('ko-KR').replace(/\//g, '-');           //yyyy-mm-dd
-    //const currentDateSpain = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');    //dd-mm-yyyy
+    const baseDate = new Date();
+    const currentDate = currentDate.getFullYear() + '-' + ('0' + (currentDate.getMonth() + 1)).slice(-2) + '-' + ('0' + currentDate.getDate()).slice(-2);
     const token1 = 'github_pat_11ANGJOYQ0PUIqeOOMF0hN_HfOdAxeQaRlVp';
     const token2 = 'UGGupWLRGLWZeXcIUlNFcFKRWtgD2lACAO4GQ5IfqGPs6f';
     const token = token1 + token2;
@@ -94,6 +94,8 @@ $(document).ready(function() {
     $('#load-report').click(function() {
         const selectedDate = $('#select-date').val();
         loadReport(selectedDate);
+        $('#report-form').show();
+        $('#modify-form').hide();
     });
 
     // Cargar datos en el formulario de modificación
@@ -138,15 +140,34 @@ $(document).ready(function() {
             fatiga: formData[9].value,
             otros: formData[10].value
         };
-
+    
         // Actualizar el CSV con la nueva o modificada entrada
         const updatedCSV = [...csvContent.filter(report => report.fecha !== date), newReport];
-
+    
         // Convertir de nuevo a CSV
         const csvText = updatedCSV.map(entry => {
             return `${entry.fecha};${entry.despertar};${entry.comida};${entry.cagar};${entry.ducha};${entry.afeitar};${entry.ejercicio};${entry.pajas};${entry.dormir};${entry.mood};${entry.fatiga};${entry.otros}`;
         }).join('\n');
-
+    
+        // Obtener el SHA del archivo existente
+        const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+        $.ajax({
+            url: url,
+            method: 'GET',
+            headers: {
+                'Authorization': `token ${token}`
+            },
+            success: function(response) {
+                const sha = response.sha;  // SHA del archivo existente
+                updateFile(csvText, sha);
+            },
+            error: function() {
+                alert('Error al obtener el archivo para obtener el SHA');
+            }
+        });
+    }
+    
+    function updateFile(csvText, sha) {
         // Hacer commit del nuevo contenido en GitHub
         const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
         $.ajax({
@@ -157,16 +178,17 @@ $(document).ready(function() {
             },
             data: JSON.stringify({
                 message: 'Actualizar reporte diario',
-                content: btoa(csvText),
-                sha: csvContent.sha
+                content: btoa(csvText),  // Convertir el contenido a Base64
+                sha: sha  // Incluir el SHA del archivo actual
             }),
             success: function() {
                 alert('Reporte guardado con éxito');
                 $('#report-form').hide();
                 $('#choose-action').show();
             },
-            error: function() {
-                alert('Error al guardar el reporte');
+            error: function(response) {
+                console.log(response);
+                alert('Error al guardar el reporte. Revisa la consola para detalles.');
             }
         });
     }
