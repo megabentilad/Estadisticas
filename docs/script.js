@@ -11,7 +11,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Decimocuarto commit");
+    console.log("Decimoquinto commit");
     loadCSVContent();
 
     function loadCSVContent() {
@@ -149,7 +149,7 @@ $(document).ready(function() {
     // Guardar el reporte en el archivo CSV y hacer commit
     $('#save-report').click(function(event) {
         event.preventDefault();
-        const formData = "seq=;\n" + $('#report-form-fields').serializeArray();
+        const formData = $('#report-form-fields').serializeArray();
         saveReport(formData);
 
         console.log("Contenido de formData:");
@@ -180,12 +180,13 @@ $(document).ready(function() {
         console.log("Contenido de updatedCSV:");
         console.log(updatedCSV);
         // Convertir de nuevo a CSV
-        const csvText = updatedCSV.map(entry => {
+        var csvText = "seq=;\n" + "dia;despertar;comida;cagar;ducha;afeitar;ejercicio;pajas;dormir;mood;fatiga;otros\n"
+        csvText += updatedCSV.map(entry => {
             return `${entry.fecha};${entry.despertar};${entry.comida};${entry.cagar};${entry.ducha};${entry.afeitar};${entry.ejercicio};${entry.pajas};${entry.dormir};${entry.mood};${entry.fatiga};${entry.otros}`;
         }).join('\n');
     
         console.log("Contenido de csvText:");
-        console.log(formData);
+        console.log(csvText);
         // Obtener el SHA del archivo existente
         const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
         $.ajax({
