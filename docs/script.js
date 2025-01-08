@@ -11,7 +11,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Decimoquinto commit");
+    console.log("Decimosexto commit");
     loadCSVContent();
 
     function loadCSVContent() {
@@ -37,7 +37,7 @@ $(document).ready(function() {
                 if (csvContent.find(entry => entry.fecha === currentDate)){
                     $('#create-report').html("Ya existe un reporte para hoy");
                     $('#create-report').prop("disabled",true);
-                    $('#create-report').css("background-color", "#e6834a");
+                    $('#create-report').css("background-color", "#e6834a").css("cursor", "not-allowed");
                 }
             }
         });
@@ -131,6 +131,7 @@ $(document).ready(function() {
     function loadReport(date) {
         const report = csvContent.find(entry => entry.fecha === date);
         if (report) {
+            $('#fecha').val(report.fecha);
             $('#despertar').val(report.despertar);
             $('#comida').val(report.comida);
             $('#cagar').val(report.cagar);
@@ -175,7 +176,12 @@ $(document).ready(function() {
         };
     
         // Actualizar el CSV con la nueva o modificada entrada
-        const updatedCSV = [...csvContent.filter(report => report.fecha !== formData[0].value), newReport];
+        var updatedCSV = [...csvContent.filter(report => report.fecha !== formData[0].value), newReport];
+
+        // Ordenar el CSV por fecha
+        updatedCSV.sort(function(a, b) {
+            return new Date(a.fecha) - new Date(b.fecha);
+        });
     
         console.log("Contenido de updatedCSV:");
         console.log(updatedCSV);
