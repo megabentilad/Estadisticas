@@ -11,11 +11,8 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
+    console.log("Duodécimo commit");
     loadCSVContent();
-    if (csvContent.find(entry => entry.fecha === date)){
-        $('#create-report').html("Ya existe un reporte para hoy");
-        $('#create-report').prop("disabled",true)
-    }
 
     function loadCSVContent() {
         const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
@@ -35,6 +32,13 @@ $(document).ready(function() {
                 console.log(content);
                 console.log("Contenido del array:");
                 console.log(csvContent);
+                
+                //Mirar si el reporte del día ya ha sido creado y desactivar el botón si es el caso
+                if (csvContent.find(entry => entry.fecha === date)){
+                    $('#create-report').html("Ya existe un reporte para hoy");
+                    $('#create-report').prop("disabled",true);
+                    $('#create-report').css("background-color", "#e6834a");
+                }
             }
         });
     }
@@ -43,7 +47,7 @@ $(document).ready(function() {
     function parseCSV(content) {
         const lines = content.split('\n');
         const result = [];
-        lines.slice(1).forEach(line => {
+        lines.slice(2).forEach(line => {
             const fields = line.split(';');
             if (fields.length > 1) {
                 result.push({
