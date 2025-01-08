@@ -11,7 +11,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Decimotercer commit");
+    console.log("Decimocuarto commit");
     loadCSVContent();
 
     function loadCSVContent() {
@@ -149,8 +149,7 @@ $(document).ready(function() {
     // Guardar el reporte en el archivo CSV y hacer commit
     $('#save-report').click(function(event) {
         event.preventDefault();
-        const formData = "seq=;\n"
-        formData += $('#report-form-fields').serializeArray();
+        const formData = "seq=;\n" + $('#report-form-fields').serializeArray();
         saveReport(formData);
 
         console.log("Contenido de formData:");
