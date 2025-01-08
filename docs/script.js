@@ -11,7 +11,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Duodécimo commit");
+    console.log("Decimotercer commit");
     loadCSVContent();
 
     function loadCSVContent() {
@@ -34,7 +34,7 @@ $(document).ready(function() {
                 console.log(csvContent);
                 
                 //Mirar si el reporte del día ya ha sido creado y desactivar el botón si es el caso
-                if (csvContent.find(entry => entry.fecha === date)){
+                if (csvContent.find(entry => entry.fecha === currentDate)){
                     $('#create-report').html("Ya existe un reporte para hoy");
                     $('#create-report').prop("disabled",true);
                     $('#create-report').css("background-color", "#e6834a");
