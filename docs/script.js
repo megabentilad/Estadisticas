@@ -12,6 +12,10 @@ $(document).ready(function() {
 
     // Cargar el archivo CSV completo al inicio
     loadCSVContent();
+    if (csvContent.find(entry => entry.fecha === date)){
+        $('#create-report').html("Ya existe un reporte para hoy");
+        $('#create-report').prop("disabled",true)
+    }
 
     function loadCSVContent() {
         const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
@@ -39,7 +43,7 @@ $(document).ready(function() {
     function parseCSV(content) {
         const lines = content.split('\n');
         const result = [];
-        lines.slice(2).forEach(line => {
+        lines.slice(1).forEach(line => {
             const fields = line.split(';');
             if (fields.length > 1) {
                 result.push({
@@ -66,6 +70,7 @@ $(document).ready(function() {
     function loadAvailableDates() {
         const dates = csvContent.map(entry => entry.fecha);
         $('#select-date').empty();
+        //$('#select-date').val(currentDate);      //Seleciona automaticamnte la fecha actual
         dates.forEach(date => {
             $('#select-date').append(`<option value="${date}">${date}</option>`);
         });
@@ -140,37 +145,44 @@ $(document).ready(function() {
     // Guardar el reporte en el archivo CSV y hacer commit
     $('#save-report').click(function(event) {
         event.preventDefault();
-        const formData = $('#report-form-fields').serializeArray();
-        const date = $('#fecha').val();
-        saveReport(date, formData);
+        const formData = "seq=;\n"
+        formData += $('#report-form-fields').serializeArray();
+        saveReport(formData);
+
+        console.log("Contenido de formData:");
+        console.log(formData);
     });
 
     // Guardar el reporte actualizado
-    function saveReport(date, formData) {
+    function saveReport(formData) {
         const newReport = {
-            fecha: date,
-            despertar: formData[0].value,
-            comida: formData[1].value,
-            cagar: formData[2].value,
-            ducha: formData[3].value,
-            afeitar: formData[4].value,
-            peso: formData[5].value,
-            ejercicio: formData[6].value,
-            pajas: formData[7].value,
-            dormir: formData[8].value,
-            mood: formData[9].value,
-            fatiga: formData[10].value,
-            otros: formData[11].value
+            fecha: formData[0].value,
+            despertar: formData[1].value,
+            comida: formData[2].value,
+            cagar: formData[3].value,
+            ducha: formData[4].value,
+            afeitar: formData[5].value,
+            peso: formData[6].value,
+            ejercicio: formData[7].value,
+            pajas: formData[8].value,
+            dormir: formData[9].value,
+            mood: formData[10].value,
+            fatiga: formData[11].value,
+            otros: formData[12].value
         };
     
         // Actualizar el CSV con la nueva o modificada entrada
-        const updatedCSV = [...csvContent.filter(report => report.fecha !== date), newReport];
+        const updatedCSV = [...csvContent.filter(report => report.fecha !== formData[0].value), newReport];
     
+        console.log("Contenido de updatedCSV:");
+        console.log(updatedCSV);
         // Convertir de nuevo a CSV
         const csvText = updatedCSV.map(entry => {
             return `${entry.fecha};${entry.despertar};${entry.comida};${entry.cagar};${entry.ducha};${entry.afeitar};${entry.ejercicio};${entry.pajas};${entry.dormir};${entry.mood};${entry.fatiga};${entry.otros}`;
         }).join('\n');
     
+        console.log("Contenido de csvText:");
+        console.log(formData);
         // Obtener el SHA del archivo existente
         const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
         $.ajax({
