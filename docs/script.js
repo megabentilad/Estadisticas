@@ -11,7 +11,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Decimosexto commit");
+    console.log("Decimoséptimo commit");
     loadCSVContent();
 
     function loadCSVContent() {
@@ -119,12 +119,26 @@ $(document).ready(function() {
         $('#choose-action').show();
     });
 
+
+
     // Cargar reporte para modificar
     $('#load-report').click(function() {
         const selectedDate = $('#select-date').val();
         loadReport(selectedDate);
+        $('#select-date').val("");
         $('#report-form').show();
         $('#modify-form').hide();
+    });
+
+    // Avisar si la fecha seleccionada existe en el reporte y desactivar el botón hasta que se selecione una fecha
+    $('#load-report').prop("disabled",true);
+    $('#select-date').change(function() {
+        $('#load-report').prop("disabled",false);
+        if (csvContent.find(entry => entry.fecha !== $('#select-date').val())){
+            $('#load-report').html("Cargar Reporte\nATENCIÓN: la fecha aun no tiene reportes");
+        }else{
+            $('#load-report').html("Cargar Reporte");
+        }
     });
 
     // Cargar datos en el formulario de modificación
@@ -186,9 +200,9 @@ $(document).ready(function() {
         console.log("Contenido de updatedCSV:");
         console.log(updatedCSV);
         // Convertir de nuevo a CSV
-        var csvText = "seq=;\n" + "dia;despertar;comida;cagar;ducha;afeitar;ejercicio;pajas;dormir;mood;fatiga;otros\n"
+        var csvText = "seq=;\n" + "dia;despertar;comida;cagar;ducha;afeitar;peso;ejercicio;pajas;dormir;mood;fatiga;otros\n"
         csvText += updatedCSV.map(entry => {
-            return `${entry.fecha};${entry.despertar};${entry.comida};${entry.cagar};${entry.ducha};${entry.afeitar};${entry.ejercicio};${entry.pajas};${entry.dormir};${entry.mood};${entry.fatiga};${entry.otros}`;
+            return `${entry.fecha};${entry.despertar};${entry.comida};${entry.cagar};${entry.ducha};${entry.afeitar};${entry.peso};${entry.ejercicio};${entry.pajas};${entry.dormir};${entry.mood};${entry.fatiga};${entry.otros}`;
         }).join('\n');
     
         console.log("Contenido de csvText:");
