@@ -18,7 +18,7 @@ $(document).ready(function() {
     // Cargar el archivo CSV completo al inicio
     console.log("Decimonoveno commit");
     
-    if (tokenEditar == null) {
+    if ((tokenEditar == null) || (tokenEditar == "")) {
         loadCSVContent(tokenVer);
     }else{
         loadCSVContent(tokenEditar);
@@ -53,7 +53,7 @@ $(document).ready(function() {
                 }
 
                 // Si no hay token para editar, ocultar las opciones de edición
-                if (tokenEditar == null) {
+                if ((tokenEditar == null) || (tokenEditar == "")) {
                     $('#create-report').hide();
                     $('#modify-report').hide();
                 }
