@@ -1,6 +1,7 @@
 $(document).ready(function() {
     const baseDate = new Date();
-    const baseYesterdayDate = baseDate.getDate() - 1
+    const baseYesterdayDate = new Date(baseDate);
+    baseYesterdayDate.setDate(baseDate.getDate() - 1)
     //const currentDate = baseDate.getFullYear() + '-' + ('0' + (baseDate.getMonth() + 1)).slice(-2) + '-' + ('0' + baseDate.getDate()).slice(-2);
     const yesterdayDate = baseYesterdayDate.getFullYear() + '-' + ('0' + (baseYesterdayDate.getMonth() + 1)).slice(-2) + '-' + ('0' + baseYesterdayDate.getDate()).slice(-2);
     const yesterdayWeekDay = getWeekDay(baseYesterdayDate);
@@ -15,7 +16,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Decimooctavo commit");
+    console.log("Decimonoveno commit");
     
     if (tokenEditar == null) {
         loadCSVContent(tokenVer);
