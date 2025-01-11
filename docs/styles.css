@@ -61,6 +61,18 @@ label {
     font-weight: bold;
 }
 
+table {
+    width: 50%;
+    border-collapse: collapse;
+}
+table, th, td {
+    border: 1px solid black;
+}
+th, td {
+    padding: 8px;
+    text-align: center;
+}
+
 @media (max-width: 768px) {
     .container {
         width: 100%;

@@ -14,6 +14,7 @@
         <div id="choose-action">
             <button id="create-report">Crear Nuevo Reporte</button>
             <button id="modify-report">Modificar Reporte</button>
+            <button id="show-raw-data">Ver los datos en bruto</button>
         </div>
 
         <!-- Formulario para crear o modificar reporte -->
@@ -70,6 +71,30 @@
             <label for="select-date">Selecciona una fecha:</label>
             <input type="date" id="select-date" name="select-date"><br><br>
             <button id="load-report">Cargar Reporte</button>
+            <button type="button" id="back-to-selector-modify">Volver</button>
+        </div>
+
+        <!-- Mostrar datos brutos -->
+        <div id="raw-data-visualization" style="display:none;">
+            <h2>Datos en bruto</h2>
+            <button type="button" id="back-to-selector-modify">Volver</button>
+            <table id="raw-data-table">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Despertar</th>
+                    <th>Comida</th>
+                    <th>Cagar</th>
+                    <th>Ducha</th>
+                    <th>Afeitar</th>
+                    <th>Peso</th>
+                    <th>Ejercicio</th>
+                    <th>Pajas</th>
+                    <th>Dormir</th>
+                    <th>Mood</th>
+                    <th>Fatiga</th>
+                    <th>Otros</th>
+                </tr>
+            </table>
             <button type="button" id="back-to-selector-modify">Volver</button>
         </div>
     </div>

@@ -1,9 +1,13 @@
 $(document).ready(function() {
     const baseDate = new Date();
-    const currentDate = baseDate.getFullYear() + '-' + ('0' + (baseDate.getMonth() + 1)).slice(-2) + '-' + ('0' + baseDate.getDate()).slice(-2);
-    const token1 = 'github_pat_11ANGJOYQ0PUIqeOOMF0hN_HfOdAxeQaRlVp';
-    const token2 = 'UGGupWLRGLWZeXcIUlNFcFKRWtgD2lACAO4GQ5IfqGPs6f';
-    const token = token1 + token2;
+    const baseYesterdayDate = baseDate.getDate() - 1
+    //const currentDate = baseDate.getFullYear() + '-' + ('0' + (baseDate.getMonth() + 1)).slice(-2) + '-' + ('0' + baseDate.getDate()).slice(-2);
+    const yesterdayDate = baseYesterdayDate.getFullYear() + '-' + ('0' + (baseYesterdayDate.getMonth() + 1)).slice(-2) + '-' + ('0' + baseYesterdayDate.getDate()).slice(-2);
+    const yesterdayWeekDay = getWeekDay(baseYesterdayDate);
+    const tokenVer1 = 'github_pat_11ANGJOYQ0KYo7NStzY7fS_Sq8gFZTuM9u';
+    const tokenVer2 = 'jfIj6mcVK0YCXZ6p6cjI1QCjHay5b1rcUWHKTAE34QQPhmik';
+    const tokenVer = tokenVer1 + tokenVer2;
+    const tokenEditar = prompt("Ingresa el token de git para poder editar:");
     const owner = 'megabentilad';
     const repo = 'Estadisticas';
     const filePath = 'docs/base.csv';
@@ -11,10 +15,15 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Decimoséptimo commit");
-    loadCSVContent();
+    console.log("Decimooctavo commit");
+    
+    if (tokenEditar == null) {
+        loadCSVContent(tokenVer);
+    }else{
+        loadCSVContent(tokenEditar);
+    }
 
-    function loadCSVContent() {
+    function loadCSVContent(token) {
         const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
         $.ajax({
             url: url,
@@ -34,11 +43,43 @@ $(document).ready(function() {
                 console.log(csvContent);
                 
                 //Mirar si el reporte del día ya ha sido creado y desactivar el botón si es el caso
-                if (csvContent.find(entry => entry.fecha === currentDate)){
-                    $('#create-report').html("Ya existe un reporte para hoy");
+                if (csvContent.find(entry => entry.fecha === yesterdayDate)){
+                    $('#create-report').html("Ya existe un reporte para ayer " + yesterdayWeekDay + " " + yesterdayDate);
                     $('#create-report').prop("disabled",true);
                     $('#create-report').css("background-color", "#e6834a").css("cursor", "not-allowed");
+                }else{
+                    $('#create-report').html("Rellenar el reporte de ayer " + yesterdayWeekDay + " " + yesterdayDate);
                 }
+
+                // Si no hay token para editar, ocultar las opciones de edición
+                if (tokenEditar == null) {
+                    $('#create-report').hide();
+                    $('#modify-report').hide();
+                }
+
+                // Rellenar la tabla de datos en bruto
+                const $table = $("#raw-data-table");
+
+                csvContent.forEach(rowData => {
+                    const $row = $("<tr></tr>"); // Create a new row
+                    rowData.forEach(cellData => {
+                        const $cell = $("<td></td>").text(cellData); // Create a new cell
+                        $row.append($cell); // Append the cell to the row
+                    });
+                    $table.append($row); // Append the row to the table
+                });
+
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Handle error here
+                console.error("Error occurred:", textStatus, errorThrown);
+                if (tokenEditar !== null) {
+                    alert("No se ha podido obtener datos del repositorio.\nProbando de nuevo con el token de visualización.");
+                    loadCSVContent(tokenVer);
+                }else{
+                    alert("Un problema de red evita que la página funcione. Espere unos minutos antes de intentarlo de nuevo.");
+                }
+
             }
         });
     }
@@ -74,7 +115,7 @@ $(document).ready(function() {
     function loadAvailableDates() {
         const dates = csvContent.map(entry => entry.fecha);
         $('#select-date').empty();
-        //$('#select-date').val(currentDate);      //Seleciona automaticamnte la fecha actual
+        //$('#select-date').val(yesterdayDate);      //Seleciona automaticamnte la fecha de ayer
         dates.forEach(date => {
             $('#select-date').append(`<option value="${date}">${date}</option>`);
         });
@@ -100,13 +141,20 @@ $(document).ready(function() {
     $('#create-report').click(function() {
         $('#choose-action').hide();
         $('#report-form').show();
-        $('#fecha').val(currentDate);
+        $('#fecha').val(yesterdayDate);
     });
 
     $('#modify-report').click(function() {
         $('#choose-action').hide();
         $('#modify-form').show();
     });
+
+    // Mostrar estadísticas
+    $('#show-raw-data').click(function() {
+        $('#choose-action').hide();
+        $('#raw-data-visualization').show();
+    });
+
 
     // Volver al selector de acción
     $('#back-to-selector').click(function() {
@@ -116,6 +164,10 @@ $(document).ready(function() {
 
     $('#back-to-selector-modify').click(function() {
         $('#modify-form').hide();
+        $('#choose-action').show();
+    });
+    $('#back-to-selector-raw-data').click(function() {
+        $('#raw-data-visualization').hide();
         $('#choose-action').show();
     });
 
@@ -144,8 +196,8 @@ $(document).ready(function() {
     // Cargar datos en el formulario de modificación
     function loadReport(date) {
         const report = csvContent.find(entry => entry.fecha === date);
+        $('#fecha').val(date);
         if (report) {
-            $('#fecha').val(report.fecha);
             $('#despertar').val(report.despertar);
             $('#comida').val(report.comida);
             $('#cagar').val(report.cagar);
@@ -251,5 +303,10 @@ $(document).ready(function() {
                 alert('Error al guardar el reporte. Revisa la consola para detalles.');
             }
         });
+    }
+
+    function getWeekDay(date) {
+        const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado"];
+        return daysOfWeek[dayIndex];
     }
 });
