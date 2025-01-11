@@ -308,6 +308,6 @@ $(document).ready(function() {
 
     function getWeekDay(date) {
         const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado"];
-        return daysOfWeek[dayIndex];
+        return daysOfWeek[date.getDay()];
     }
 });
