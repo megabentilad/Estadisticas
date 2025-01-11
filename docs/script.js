@@ -61,10 +61,11 @@ $(document).ready(function() {
                 // Rellenar la tabla de datos en bruto
                 const $table = $("#raw-data-table");
 
+                const headers = Object.keys(csvContent[0]);
                 csvContent.forEach(rowData => {
-                    const $row = $("<tr></tr>"); // Create a new row
-                    rowData.forEach(cellData => {
-                        const $cell = $("<td></td>").text(cellData); // Create a new cell
+                    const $row = $("<tr></tr>"); // Create a new table row
+                    headers.forEach(header => {
+                        const $cell = $("<td></td>").text(rowData[header] || ""); // Get cell data by key
                         $row.append($cell); // Append the cell to the row
                     });
                     $table.append($row); // Append the row to the table
