@@ -16,7 +16,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Decimonoveno commit");
+    console.log("Vigésimo commit");
     
     if ((tokenEditar == null) || (tokenEditar == "")) {
         loadCSVContent(tokenVer);
@@ -128,8 +128,8 @@ $(document).ready(function() {
         $('#despertar').val("");
         $('#comida').val("");
         $('#cagar').val("");
-        $('#ducha').val("");
-        $('#afeitar').val("");
+        $('#ducha').prop('checked', false);
+        $('#afeitar').prop('checked', false);
         $('#peso').val("");
         $('#ejercicio').val("");
         $('#pajas').val("");
@@ -203,8 +203,8 @@ $(document).ready(function() {
             $('#despertar').val(report.despertar);
             $('#comida').val(report.comida);
             $('#cagar').val(report.cagar);
-            $('#ducha').val(report.ducha);
-            $('#afeitar').val(report.afeitar);
+            if (report.ducha == "si") {$('#ducha').prop('checked', true)};
+            if (report.afeitar == "si") {$('#afeitar').prop('checked', true)};
             $('#peso').val(report.peso);
             $('#ejercicio').val(report.ejercicio);
             $('#pajas').val(report.pajas);
@@ -227,13 +227,21 @@ $(document).ready(function() {
 
     // Guardar el reporte actualizado
     function saveReport(formData) {
+        var duchaVal = "si"
+        var afeitarVal = "si"
+        if (!$('#ducha').is(':checked')){
+            duchaVal = "no"
+        }
+        if (!$('#afeitar').is(':checked')){
+            afeitarVal = "no"
+        }
         const newReport = {
             fecha: formData[0].value,
             despertar: formData[1].value,
             comida: formData[2].value,
             cagar: formData[3].value,
-            ducha: formData[4].value,
-            afeitar: formData[5].value,
+            ducha: duchaVal,
+            afeitar: afeitarVal,
             peso: formData[6].value,
             ejercicio: formData[7].value,
             pajas: formData[8].value,
@@ -267,7 +275,7 @@ $(document).ready(function() {
             url: url,
             method: 'GET',
             headers: {
-                'Authorization': `token ${token}`
+                'Authorization': `token ${tokenEditar}`
             },
             success: function(response) {
                 const sha = response.sha;  // SHA del archivo existente
@@ -286,7 +294,7 @@ $(document).ready(function() {
             url: url,
             method: 'PUT',
             headers: {
-                'Authorization': `token ${token}`
+                'Authorization': `token ${tokenEditar}`
             },
             data: JSON.stringify({
                 message: 'Actualizar reporte diario',
