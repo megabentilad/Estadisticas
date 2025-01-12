@@ -219,10 +219,8 @@ $(document).ready(function() {
     $('#save-report').click(function(event) {
         event.preventDefault();
         const formData = $('#report-form-fields').serializeArray();
-        const formDataObject = Object.fromEntries(
-            formData.map(field => [field.name, field.value])
-        );
-        saveReport(formDataObject);
+        
+        saveReport(formData);
 
         console.log("Contenido de formData:");
         console.log(formData);
@@ -238,6 +236,9 @@ $(document).ready(function() {
         if (!$('#afeitar').is(':checked')){
             afeitarVal = "no"
         }
+        const formDataObject = Object.fromEntries(
+            formData.map(field => [field.name, field.value])
+        );
         const newReport = {
             fecha: formDataObject.fecha,
             despertar: formDataObject.despertar,
