@@ -219,7 +219,10 @@ $(document).ready(function() {
     $('#save-report').click(function(event) {
         event.preventDefault();
         const formData = $('#report-form-fields').serializeArray();
-        saveReport(formData);
+        const formDataObject = Object.fromEntries(
+            formData.map(field => [field.name, field.value])
+        );
+        saveReport(formDataObject);
 
         console.log("Contenido de formData:");
         console.log(formData);
@@ -236,19 +239,19 @@ $(document).ready(function() {
             afeitarVal = "no"
         }
         const newReport = {
-            fecha: formData[0].value,
-            despertar: formData[1].value,
-            comida: formData[2].value,
-            cagar: formData[3].value,
-            ducha: duchaVal,
-            afeitar: afeitarVal,
-            peso: formData[6].value,
-            ejercicio: formData[7].value,
-            pajas: formData[8].value,
-            dormir: formData[9].value,
-            mood: formData[10].value,
-            fatiga: formData[11].value,
-            otros: formData[12].value
+            fecha: formDataObject.fecha,
+            despertar: formDataObject.despertar,
+            comida: formDataObject.comida,
+            cagar: formDataObject.cagar,
+            ducha: duchaVal.ducha,
+            afeitar: afeitarVal.afeitar,
+            peso: formDataObject.peso,
+            ejercicio: formDataObject.ejercicio,
+            pajas: formDataObject.pajas,
+            dormir: formDataObject.dormir,
+            mood: formDataObject.mood,
+            fatiga: formDataObject.fatiga,
+            otros: formDataObject.otros
         };
     
         // Actualizar el CSV con la nueva o modificada entrada
