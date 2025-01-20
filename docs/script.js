@@ -16,7 +16,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimoprimer commit - 3");
+    console.log("Vigésimoprimer commit - 4");
     inicio();
     
     function inicio(){
@@ -94,11 +94,10 @@ $(document).ready(function() {
             // Calculate the difference in days
             const diffInDays = Math.floor((currentDate - prevDate) / (1000 * 60 * 60 * 24));
 
-            // If the difference is greater than 1, there are missing dates
             if (diffInDays > 1) {
                 for (let j = 1; j < diffInDays; j++) {
                     const missingDate = new Date(prevDate);
-                    missingDate.setDate(prevDate.getDate() + j);
+                    missingDate.setDate(prevDate.getDate() + j + 1);
                     missingDates.push(missingDate.toISOString().split("T")[0]); // Format as YYYY-MM-DD
                 }
             }
