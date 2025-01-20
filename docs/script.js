@@ -16,7 +16,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimoprimer commit - 5");
+    console.log("Vigésimoprimer commit - 6");
     inicio();
     
     function inicio(){
@@ -35,7 +35,10 @@ $(document).ready(function() {
                 'Authorization': `token ${token}`
             },
             success: function(response) {
-                const content = atob(response.content);
+                const rawContent = atob(response.content);
+                // Cambiar símbolos por tildes y eñes (Tildes mayúsculas y ñ mayúscula no tienen formato)
+                const content = rawContent.replace("Ã¡", "á").replace("Ã©", "é").replace("Ã³", "ó").replace("Ãº", "ú").replace("Ã±", "ñ").replace("Ã", "í")
+
                 csvContent = parseCSV(content);
                 // Cargar las fechas disponibles para modificar reportes
                 loadAvailableDates();
