@@ -16,7 +16,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimoprimer commit");
+    console.log("Vigésimoprimer commit - 2");
     inicio();
     
     function inicio(){
@@ -87,9 +87,9 @@ $(document).ready(function() {
     function qualityCheck(content){
         // Comprobar si falta algún día
         const missingDates = [];
-        for (let i = 1; i < content.fecha.length; i++) {
-            const prevDate = new Date(dates[i - 1]);
-            const currentDate = new Date(dates[i]);
+        for (let i = 1; i < content.length; i++) {
+            const prevDate = new Date(content[i - 1].fecha);
+            const currentDate = new Date(dates[i].fecha);
 
             // Calculate the difference in days
             const diffInDays = Math.floor((currentDate - prevDate) / (1000 * 60 * 60 * 24));
