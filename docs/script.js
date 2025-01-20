@@ -16,12 +16,15 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimo commit");
+    console.log("Vigésimoprimer commit");
+    inicio();
     
-    if ((tokenEditar == null) || (tokenEditar == "")) {
-        loadCSVContent(tokenVer);
-    }else{
-        loadCSVContent(tokenEditar);
+    function inicio(){
+        if ((tokenEditar == null) || (tokenEditar == "")) {
+            loadCSVContent(tokenVer);
+        }else{
+            loadCSVContent(tokenEditar);
+        }
     }
 
     function loadCSVContent(token) {
@@ -59,17 +62,10 @@ $(document).ready(function() {
                 }
 
                 // Rellenar la tabla de datos en bruto
-                const $table = $("#raw-data-table");
+                manageRawDatatTable();
 
-                const headers = Object.keys(csvContent[0]);
-                csvContent.forEach(rowData => {
-                    const $row = $("<tr></tr>"); // Create a new table row
-                    headers.forEach(header => {
-                        const $cell = $("<td></td>").text(rowData[header] || ""); // Get cell data by key
-                        $row.append($cell); // Append the cell to the row
-                    });
-                    $table.append($row); // Append the row to the table
-                });
+                // Comprobar que los datos son correctos y mostrar alertas en la consola
+                qualityCheck(csvContent);
 
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -83,6 +79,63 @@ $(document).ready(function() {
                 }
 
             }
+        });
+    }
+
+
+    //Comprobar el estado de los datos
+    function qualityCheck(content){
+        // Comprobar si falta algún día
+        const missingDates = [];
+        for (let i = 1; i < content.fecha.length; i++) {
+            const prevDate = new Date(dates[i - 1]);
+            const currentDate = new Date(dates[i]);
+
+            // Calculate the difference in days
+            const diffInDays = Math.floor((currentDate - prevDate) / (1000 * 60 * 60 * 24));
+
+            // If the difference is greater than 1, there are missing dates
+            if (diffInDays > 1) {
+                for (let j = 1; j < diffInDays; j++) {
+                    const missingDate = new Date(prevDate);
+                    missingDate.setDate(prevDate.getDate() + j);
+                    missingDates.push(missingDate.toISOString().split("T")[0]); // Format as YYYY-MM-DD
+                }
+            }
+        }
+        if (missingDates.length > 0) {
+            console.warn("Faltan fechas en el reporte!!: ", missingDates);
+        } else {
+            console.log("No falta ninguna fecha en el reporte. Good job!!");
+        }
+
+
+    }
+
+    //Gestionar la tabla de valores en bruto
+    function manageRawDatatTable(){
+        // Rellenar la tabla de datos en bruto
+        const $table = $("#raw-data-table");
+
+        // Vaciar la tabla
+        $table.empty();
+
+        // Incluir los headers en la tabla
+        const titulos = ["Fecha", "Despertar", "Comida", "Cagar", "Ducha", "Afeitar", "Peso", "Ejercicio", "Pajas", "Dormir", "Mood", "Fatiga", "Otros"];
+        const headerRow = $("<tr></tr>");
+        titulos.forEach(header => {
+            headerRow.append($("<th></th>").text(header));
+        });
+        $table.append(headerRow);
+
+        const headers = Object.keys(csvContent[0]);
+        csvContent.forEach(rowData => {
+            const $row = $("<tr></tr>"); // Create a new table row
+            headers.forEach(header => {
+                const $cell = $("<td></td>").text(rowData[header] || ""); // Get cell data by key
+                $row.append($cell); // Append the cell to the row
+            });
+            $table.append($row); // Append the row to the table
         });
     }
 
@@ -309,7 +362,7 @@ $(document).ready(function() {
                 alert('Reporte guardado con éxito');
                 $('#report-form').hide();
                 $('#choose-action').show();
-                loadCSVContent();
+                inicio();
                 cleanFormInputs();
             },
             error: function(response) {
