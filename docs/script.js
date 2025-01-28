@@ -16,7 +16,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimosgundo commit - 1");
+    console.log("Vigésimosgundo commit - 2");
     inicio();
     
     function inicio(){
@@ -307,17 +307,13 @@ $(document).ready(function() {
     // Mostrar medias
     $('#go-to-medias').click(function() {
         $('#medias-div').show();
+        $('#charts-div').hide();
     });
 
     // Mostrar graficas
     $('#go-to-charts').click(function() {
         $('#charts-div').show();
-    });
-
-    // Volver al selector de datos analizados
-    $('#back-to-analized-data-selector').click(function() {
         $('#medias-div').hide();
-        $('#charts-div').hide();
     });
 
     // Volver al selector de acción
@@ -375,7 +371,7 @@ $(document).ready(function() {
     // Segundos a tiempo
     function secondsToTime(seconds){
         const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor(seconds % 60 / 60);
+        const minutes = Math.floor(seconds % 3600 / 60);
         const remainingSeconds = seconds % 60;
 
         if (hours != 0){
