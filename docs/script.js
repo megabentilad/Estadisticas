@@ -16,7 +16,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimosgundo commit - 2");
+    console.log("Vigésimosgundo commit - 3");
     inicio();
     
     function inicio(){
@@ -46,10 +46,10 @@ $(document).ready(function() {
                 loadAvailableDates();
 
                 //Mostrar los datos en consola
-                console.log("Contenido del fichero CSV:");
-                console.log(content);
-                console.log("Contenido del array:");
-                console.log(csvContent);
+                //console.log("Contenido del fichero CSV:");
+                //console.log(content);
+                //console.log("Contenido del array:");
+                //console.log(csvContent);
                 
                 //Mirar si el reporte del día ya ha sido creado y desactivar el botón si es el caso
                 if (csvContent.find(entry => entry.fecha === yesterdayDate)){
@@ -123,7 +123,7 @@ $(document).ready(function() {
 
     // Gestionar las medias básicas
     function createBasicMedias(){
-        console.log("-- MEDIAS --");
+        //console.log("-- MEDIAS --");
         var vecesCagadoTotal = 0;
         var tiempoCagadoTotal = 0;
         var tiempoCagadoLimpiarTotal = 0;
@@ -135,10 +135,10 @@ $(document).ready(function() {
         var vecesPajasTotal = 0;
 
 
-        for (let i = 1; i < csvContent.length; i++) {
-            console.log("- " + csvContent[i].fecha + " -");
+        for (let i = 0; i < csvContent.length; i++) {
+            //console.log("- " + csvContent[i].fecha + " -");
             // Cagar
-            console.log("  Cagar");
+            //console.log("  Cagar");
             csvContent[i].cagar.split("),").forEach(line => {
                 // 0 Hora
                 // 1 Tiempo cagar
@@ -148,8 +148,8 @@ $(document).ready(function() {
                 tiempoCagadoTotal += timeToSeconds(subLine[1]);
                 tiempoCagadoLimpiarTotal += timeToSeconds(subLine[2]);
                 //console.log("    tiempo cagando: " + subLine[1]);
-                console.log("    tiempo limpiando: " + subLine[2]);
-                console.log("    tiempo limpiando total: " + tiempoCagadoLimpiarTotal);
+                //console.log("    tiempo limpiando: " + subLine[2]);
+                //console.log("    tiempo limpiando total: " + tiempoCagadoLimpiarTotal);
             });
 
             // Duchas
@@ -166,6 +166,7 @@ $(document).ready(function() {
             //console.log("  Peso");
             pesoTotal += parseFloat(csvContent[i].peso);
             //console.log("    peso: " + csvContent[i].peso);
+            //console.log("    peso total: " + pesoTotal);
 
             // Ejercicio
             if (csvContent[i].ejercicio == "sentadillas"){
@@ -181,10 +182,10 @@ $(document).ready(function() {
 
         // Escribir la info en el div
         const subsections = [
-            { title: "Cagar", text: "Total de cagaciones = " + vecesCagadoTotal + "<br>Media de cagaciones al día = " + (vecesCagadoTotal / csvContent.length).toFixed(1) + "<br><br>Tiempo total cagando = " + secondsToTime(tiempoCagadoTotal) + "<br>Media tiempo cagando = " + secondsToTime((tiempoCagadoTotal / csvContent.length).toFixed(0)) + "<br>Tiempo total limpiando = " + secondsToTime(tiempoCagadoLimpiarTotal) + "<br>Media tiempo limpiando = " + secondsToTime((tiempoCagadoLimpiarTotal / csvContent.length).toFixed(0)) + "<br><br>Tiempo en el baño total = " + secondsToTime(tiempoCagadoLimpiarTotal + tiempoCagadoTotal) + "<br>Media de tiempo en el baño = " + secondsToTime(((tiempoCagadoTotal + tiempoCagadoLimpiarTotal) / csvContent.length).toFixed(0)) },
+            { title: "Cagar", text: "Total de cagaciones = " + vecesCagadoTotal + "<br>Media de cagaciones al día = " + (vecesCagadoTotal / csvContent.length).toFixed(1) + "<br><br>Tiempo total cagando = " + secondsToTime(tiempoCagadoTotal) + "<br>Media tiempo cagando = " + secondsToTime((tiempoCagadoTotal / csvContent.length)) + "<br>Tiempo total limpiando = " + secondsToTime(tiempoCagadoLimpiarTotal) + "<br>Media tiempo limpiando = " + secondsToTime((tiempoCagadoLimpiarTotal / csvContent.length)) + "<br><br>Tiempo en el baño total = " + secondsToTime(tiempoCagadoLimpiarTotal + tiempoCagadoTotal) + "<br>Media de tiempo en el baño = " + secondsToTime(((tiempoCagadoTotal + tiempoCagadoLimpiarTotal) / csvContent.length)) },
             { title: "Aseo", text: "Total de duchas = " + vecesDuchaTotal + "<br>Media de duchas semanal = " + (vecesDuchaTotal / (csvContent.length / 7)).toFixed(1) + "<br><br>Total de afeitaciones = " + vecesAfeitarTotal + "<br>Media de afeitaciones semanal = " + (vecesAfeitarTotal / (csvContent.length / 7)).toFixed(1) },
             { title: "Peso", text: "Media de peso = " + (pesoTotal / csvContent.length).toFixed(1) },
-            { title: "Ejercicio", text: "Total de dias sentadillas = " + vecesSentadillasTotal },
+            { title: "Ejercicio", text: "Total de dias sentadillas = " + vecesSentadillasTotal + "<br>Total dias ring fit = " + vecesRingFitTotal + "<br><br>Media dias ejercicio a la semana = " + ((vecesSentadillasTotal + vecesRingFitTotal) / (csvContent.length / 7)).toFixed(1) },
             { title: "Pajas", text: "Total de pajas = " + vecesPajasTotal + "<br>Media de pajas al día = " + (vecesPajasTotal / csvContent.length).toFixed(1) },
         ];
 
@@ -331,6 +332,8 @@ $(document).ready(function() {
         $('#choose-action').show();
     });
     $('#back-to-selector-analized-data').click(function() {
+        $('#charts-div').hide();
+        $('#medias-div').hide();
         $('#analized-data-visualization').hide();
         $('#choose-action').show();
     });
@@ -370,11 +373,12 @@ $(document).ready(function() {
 
     // Segundos a tiempo
     function secondsToTime(seconds){
+        seconds = parseInt(seconds);
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor(seconds % 3600 / 60);
         const remainingSeconds = seconds % 60;
 
-        if (hours != 0){
+        if (hours == 0){
             return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         }else{
             return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
