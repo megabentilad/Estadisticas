@@ -16,7 +16,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimoprimer commit - 6");
+    console.log("Vigésimosgundo commit");
     inicio();
     
     function inicio(){
@@ -37,7 +37,9 @@ $(document).ready(function() {
             success: function(response) {
                 const rawContent = atob(response.content);
                 // Cambiar símbolos por tildes y eñes (Tildes mayúsculas y ñ mayúscula no tienen formato)
-                const content = rawContent.replace("Ã¡", "á").replace("Ã©", "é").replace("Ã³", "ó").replace("Ãº", "ú").replace("Ã±", "ñ").replace("Ã", "í")
+                // TODO Esta solución destruye los datos
+                //const content = rawContent.replace("Ã¡", "á").replace("Ã©", "é").replace("Ã³", "ó").replace("Ãº", "ú").replace("Ã±", "ñ").replace("Ã", "í")
+                const content = rawContent;
 
                 csvContent = parseCSV(content);
                 // Cargar las fechas disponibles para modificar reportes
@@ -64,11 +66,16 @@ $(document).ready(function() {
                     $('#modify-report').hide();
                 }
 
+                // Comprobar que los datos son correctos y mostrar alertas en la consola
+                qualityCheck();
+
                 // Rellenar la tabla de datos en bruto
                 manageRawDatatTable();
 
-                // Comprobar que los datos son correctos y mostrar alertas en la consola
-                qualityCheck(csvContent);
+                // Analizar datos y mostrar medias
+                createBasicMedias();
+
+                
 
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -87,12 +94,12 @@ $(document).ready(function() {
 
 
     //Comprobar el estado de los datos
-    function qualityCheck(content){
+    function qualityCheck(){
         // Comprobar si falta algún día
         const missingDates = [];
-        for (let i = 1; i < content.length; i++) {
-            const prevDate = new Date(content[i - 1].fecha);
-            const currentDate = new Date(content[i].fecha);
+        for (let i = 1; i < csvContent.length; i++) {
+            const prevDate = new Date(csvContent[i - 1].fecha);
+            const currentDate = new Date(csvContent[i].fecha);
 
             // Calculate the difference in days
             const diffInDays = Math.floor((currentDate - prevDate) / (1000 * 60 * 60 * 24));
@@ -114,7 +121,84 @@ $(document).ready(function() {
 
     }
 
-    //Gestionar la tabla de valores en bruto
+    // Gestionar las medias básicas
+    function createBasicMedias(){
+        console.log("-- MEDIAS --");
+        var vecesCagadoTotal = 0;
+        var tiempoCagadoTotal = 0;
+        var tiempoCagadoLimpiarTotal = 0;
+        var vecesDuchaTotal = 0;
+        var vecesAfeitarTotal = 0;
+        var pesoTotal = 0;
+        var vecesSentadillasTotal = 0;
+        var vecesRingFitTotal = 0;
+        var vecesPajasTotal = 0;
+
+
+        for (let i = 1; i < csvContent.length; i++) {
+            console.log("- " + csvContent[i].fecha + " -");
+            // Cagar
+            //console.log("  Cagar");
+            csvContent[i].cagar.split("),").forEach(line => {
+                // 0 Hora
+                // 1 Tiempo cagar
+                // 2 Tiempo limpiar
+                var subLine = line.replace("(","").replace(")","").split(",");
+                vecesCagadoTotal ++;
+                tiempoCagadoTotal += timeToSeconds(subLine[1]);
+                tiempoCagadoLimpiarTotal += timeToSeconds(subLine[2]);
+                //console.log("    tiempo cagando: " + subLine[1]);
+                //console.log("    tiempo limpiando: " + subLine[2]);
+            });
+
+            // Duchas
+            if (csvContent[i].ducha == "si"){
+                vecesDuchaTotal ++;
+            }
+
+            // Afeitar
+            if (csvContent[i].afeitar == "si"){
+                vecesAfeitarTotal ++;
+            }
+
+            // Peso
+            //console.log("  Peso");
+            pesoTotal += parseFloat(csvContent[i].peso);
+            //console.log("    peso: " + csvContent[i].peso);
+
+            // Ejercicio
+            if (csvContent[i].ejercicio == "sentadillas"){
+                vecesSentadillasTotal ++;
+            }
+            if (csvContent[i].ejercicio == "ring fit adventure"){
+                vecesRingFitTotal ++;
+            }
+
+            // Pajas
+            vecesPajasTotal += csvContent[i].pajas.split("),").length;
+        }
+
+        // Escribir la info en el div
+        const subsections = [
+            { title: "Cagar", text: "Total de cagaciones = " + vecesCagadoTotal + "<br>Media de cagaciones al día = " + (vecesCagadoTotal / csvContent.length).toFixed(1) + "<br><br>Tiempo total cagando = " + secondsToTime(tiempoCagadoTotal) + "<br>Media tiempo cagando = " + secondsToTime((tiempoCagadoTotal / csvContent.length).toFixed(1)) + "<br>Tiempo total limpiando = " + secondsToTime(tiempoCagadoLimpiarTotal) + "<br>Media tiempo limpiando = " + secondsToTime((tiempoCagadoLimpiarTotal / csvContent.length).toFixed(1)) + "<br><br>Tiempo en el baño total = " + secondsToTime(tiempoCagadoLimpiarTotal + tiempoCagadoTotal) + "<br>Media de tiempo en el baño = " + secondsToTime(((tiempoCagadoTotal + tiempoCagadoLimpiarTotal) / csvContent.length).toFixed(1)) },
+            { title: "Aseo", text: "Total de duchas = " + vecesDuchaTotal + "<br>Media de duchas semanal = " + (vecesDuchaTotal / (csvContent.length / 7)).toFixed(1) + "<br><br>Total de afeitaciones = " + vecesAfeitarTotal + "<br>Media de afeitaciones semanal = " + (vecesAfeitarTotal / (csvContent.length / 7)).toFixed(1) },
+            { title: "Peso", text: "Media de peso = " + (pesoTotal / csvContent.length).toFixed(1) },
+            { title: "Ejercicio", text: "Total de dias sentadillas = " + vecesSentadillasTotal },
+            { title: "Pajas", text: "Total de pajas = " + vecesPajasTotal + "<br>Media de pajas al día = " + (vecesPajasTotal / csvContent.length).toFixed(1) },
+        ];
+
+        subsections.forEach(section => {
+            $('#medias-div').append(`
+                <div class="subsection">
+                    <h3>${section.title}</h3>
+                    <p>${section.text}</p>
+                </div>
+            `);
+        });
+    }
+
+
+    // Gestionar la tabla de valores en bruto
     function manageRawDatatTable(){
         // Rellenar la tabla de datos en bruto
         const $table = $("#raw-data-table");
@@ -140,6 +224,7 @@ $(document).ready(function() {
             $table.append($row); // Append the row to the table
         });
     }
+
 
     // Convertir el contenido CSV a un array de objetos
     function parseCSV(content) {
@@ -212,6 +297,27 @@ $(document).ready(function() {
         $('#raw-data-visualization').show();
     });
 
+    // Mostrar selector de datos analizados
+    $('#show-analized-data').click(function() {
+        $('#choose-action').hide();
+        $('#analized-data-visualization').show();
+    });
+
+    // Mostrar medias
+    $('#go-to-medias').click(function() {
+        $('#medias-div').show();
+    });
+
+    // Mostrar graficas
+    $('#go-to-charts').click(function() {
+        $('#charts-div').show();
+    });
+
+    // Volver al selector de datos analizados
+    $('#back-to-analized-data-selector').click(function() {
+        $('#medias-div').hide();
+        $('#charts-div').hide();
+    });
 
     // Volver al selector de acción
     $('#back-to-selector').click(function() {
@@ -225,6 +331,10 @@ $(document).ready(function() {
     });
     $('#back-to-selector-raw-data').click(function() {
         $('#raw-data-visualization').hide();
+        $('#choose-action').show();
+    });
+    $('#back-to-selector-analized-data').click(function() {
+        $('#analized-data-visualization').hide();
         $('#choose-action').show();
     });
 
@@ -249,6 +359,31 @@ $(document).ready(function() {
             $('#load-report').html("Cargar Reporte");
         }
     });
+
+    // Tiempo a segundos
+    function timeToSeconds(time){
+        if (time == null){
+            return 0;
+        }
+        const minutes = parseInt(time.split(":")[0], 10);
+        const seconds = parseInt(time.split(":")[1], 10);
+
+        return minutes * 60 + seconds;
+    }
+
+    // Segundos a tiempo
+    function secondsToTime(seconds){
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor(seconds % 60 / 60);
+        const remainingSeconds = seconds % 60;
+
+        if (hours != 0){
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }else{
+            return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+        
+    }
 
     // Cargar datos en el formulario de modificación
     function loadReport(date) {

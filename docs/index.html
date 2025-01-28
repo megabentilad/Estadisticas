@@ -15,6 +15,7 @@
             <button id="create-report">Crear Nuevo Reporte</button>
             <button id="modify-report">Modificar Reporte</button>
             <button id="show-raw-data">Ver los datos en bruto</button>
+            <button id="show-analized-data">Ver los datos analizados</button>
         </div>
 
         <!-- Formulario para crear o modificar reporte -->
@@ -81,6 +82,26 @@
             <table id="raw-data-table">
             </table>
             <button type="button" id="back-to-selector-raw-data">Volver</button>
+        </div>
+
+        <!-- Mostrar datos analizados -->
+        <div id="analized-data-visualization" style="display:none;">
+            <h2>Datos analizados</h2>
+            <button type="button" id="back-to-selector-analized-data">Volver</button>
+            <button type="button" id="go-to-medias">Medias</button>
+            <button type="button" id="go-to-charts" disabled>Gráficas</button>
+
+            <!-- Mostrar medias -->
+            <div id="medias-div" style="display:none;">
+                <button type="button" id="back-to-analized-data-selector">Volver</button>
+            </div>
+
+            <!-- Mostrar graficas -->
+            <div id="charts-div" style="display:none;">
+                <button type="button" id="back-to-analized-data-selector">Volver</button>
+                <h3>WIP</h3>
+            </div>
+
         </div>
     </div>
 
