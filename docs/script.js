@@ -17,7 +17,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimotercer commit");
+    console.log("Vigésimotercer commit - 1");
     inicio();
     
     function inicio(){
@@ -130,6 +130,7 @@ $(document).ready(function() {
         var xValues = [];
         var yValues = [];
         var pajasObject = {};
+        var pajaTemas = {};
         
         for (let i = 0; i < csvContent.length; i++) {
             
@@ -139,7 +140,7 @@ $(document).ready(function() {
                 var pajlist = [];
                 paj = paj.replace("(","").replace(")","");
                 paj.split(",").forEach(pajelem => {
-                    pajlist.push(pajelem);
+                    pajlist.push(pajelem.trim());
                 });
                 pajasDelDia.push(pajlist);
 
@@ -147,25 +148,47 @@ $(document).ready(function() {
             pajasObject[csvContent[i].fecha].push(pajasDelDia);
         };
         // Chat con los temas de las pajas
+        var allThemesRepeated = [];
         for (const [key, value] of Object.entries(pajasObject)) {
-            console.log(value);
             var counts = {};
             value.forEach(item => {
                 item.forEach(item2 => {
-                    const key = item2[3];
-                    console.log(item2[3]);
-                    counts[key] = (counts[key] || 0) + 1;
+                    if (typeof item2[3] !== 'undefined'){
+                        // Normalizar tipos
+                        var theme = item2[3].replace("lolicon", "loli").replace("shotacon", "shota").replace("zapping","ruido").replace("yuri","lesbianas").replace("yaoi", "gay").replace("PV","primera vez");
+
+                        allThemesRepeated.push(theme);
+                    }
                 });
-                
               });
 
             // Creating the result lists
-            xValues.push(Object.keys(counts));
-            yValues.push(Object.values(counts));
+            
             //console.log("xValues: " + xValues);
             //console.log("yValues: " + yValues);
-          }
-          console.log(pajasObject);
+        }
+        console.log(allThemesRepeated);
+        allThemesRepeated.forEach(function (x) { 
+            pajaTemas[x] = (pajaTemas[x] || 0) + 1;
+        });
+        
+        const sortedEntries = Object.entries(pajaTemas).sort(([, a], [, b]) => b - a);
+        pajaTemas = Object.fromEntries(sortedEntries);
+
+        var otrosTemas = 0;
+        for (const [key, value] of Object.entries(pajaTemas)) {
+            if (value > 1){
+                xValues.push(key);
+                yValues.push(value);
+            }else{
+                otrosTemas ++
+            }
+            
+        }
+        xValues.push("Otros");
+        yValues.push(otrosTemas);
+
+        console.log(pajasObject);
         new Chart("chartPajasTheme", {
             type: "pie",
             data: {
@@ -175,15 +198,18 @@ $(document).ready(function() {
               }]
             },
             options: {
-                plugins: [
-                    autocolors
-                ],
-              title: {
-                display: true,
-                text: "Principales temas para pajas"
-              }
+                plugins: {
+                    autocolors,
+                    legend: {
+                        display: false
+                    }
+                },
+                title: {
+                    display: false,
+                    text: "Principales temas para pajas"
+                }
             }
-          });
+        });
 
     }
 
