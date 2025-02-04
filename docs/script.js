@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    const autocolors = window['chartjs-plugin-autocolors'];
     const baseDate = new Date();
     const baseYesterdayDate = new Date(baseDate);
     baseYesterdayDate.setDate(baseDate.getDate() - 1)
@@ -16,7 +17,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimosgundo commit - 3");
+    console.log("Vigésimotercer commit");
     inicio();
     
     function inicio(){
@@ -75,6 +76,9 @@ $(document).ready(function() {
                 // Analizar datos y mostrar medias
                 createBasicMedias();
 
+                // Analizar datos y mostrar gráficas
+                createGraphics();
+
                 
 
             },
@@ -118,6 +122,68 @@ $(document).ready(function() {
             console.log("No falta ninguna fecha en el reporte. Good job!!");
         }
 
+
+    }
+
+    // Analiza los datos y crea gráficas usando Charts.js
+    function createGraphics(){
+        var xValues = [];
+        var yValues = [];
+        var pajasObject = {};
+        
+        for (let i = 0; i < csvContent.length; i++) {
+            
+            pajasObject[csvContent[i].fecha] = [];
+            var pajasDelDia = []
+            csvContent[i].pajas.split("),").forEach(paj => {
+                var pajlist = [];
+                paj = paj.replace("(","").replace(")","");
+                paj.split(",").forEach(pajelem => {
+                    pajlist.push(pajelem);
+                });
+                pajasDelDia.push(pajlist);
+
+            });
+            pajasObject[csvContent[i].fecha].push(pajasDelDia);
+        };
+        // Chat con los temas de las pajas
+        for (const [key, value] of Object.entries(pajasObject)) {
+            console.log(value);
+            var counts = {};
+            value.forEach(item => {
+                item.forEach(item2 => {
+                    const key = item2[3];
+                    console.log(item2[3]);
+                    counts[key] = (counts[key] || 0) + 1;
+                });
+                
+              });
+
+            // Creating the result lists
+            xValues.push(Object.keys(counts));
+            yValues.push(Object.values(counts));
+            //console.log("xValues: " + xValues);
+            //console.log("yValues: " + yValues);
+          }
+          console.log(pajasObject);
+        new Chart("chartPajasTheme", {
+            type: "pie",
+            data: {
+              labels: xValues,
+              datasets: [{
+                data: yValues
+              }]
+            },
+            options: {
+                plugins: [
+                    autocolors
+                ],
+              title: {
+                display: true,
+                text: "Principales temas para pajas"
+              }
+            }
+          });
 
     }
 
