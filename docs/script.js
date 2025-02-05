@@ -9,7 +9,12 @@ $(document).ready(function() {
     const tokenVer1 = 'github_pat_11ANGJOYQ0KYo7NStzY7fS_Sq8gFZTuM9u';
     const tokenVer2 = 'jfIj6mcVK0YCXZ6p6cjI1QCjHay5b1rcUWHKTAE34QQPhmik';
     const tokenVer = tokenVer1 + tokenVer2;
-    const tokenEditar = prompt("Ingresa el token de git para poder editar:");
+    var tokenEditar = ""
+    if (GetURLParameter('token') != "") {
+        tokenEditar = GetURLParameter('token');
+    }else{
+        tokenEditar = prompt("Ingresa el token de git para poder editar:");
+    }
     const owner = 'megabentilad';
     const repo = 'Estadisticas';
     const filePath = 'docs/base.csv';
@@ -17,7 +22,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimotercer commit - 1");
+    console.log("Vigésimocuarto commit");
     inicio();
     
     function inicio(){
@@ -147,7 +152,7 @@ $(document).ready(function() {
             });
             pajasObject[csvContent[i].fecha].push(pajasDelDia);
         };
-        // Chat con los temas de las pajas
+        // Chart con los temas de las pajas
         var allThemesRepeated = [];
         for (const [key, value] of Object.entries(pajasObject)) {
             var counts = {};
@@ -210,6 +215,42 @@ $(document).ready(function() {
                 }
             }
         });
+
+        // Chart con las horas de sueño
+        xValues = [];
+        yValues = [];
+
+        for (let i = 1; i < csvContent.length; i++) {
+            xValues.push(csvContent[i].fecha);
+            yValues.push(getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar));
+
+        };
+
+        new Chart("chartHorasSueño", {
+            type: "line",
+            data: {
+              labels: xValues,
+              datasets: [{
+                data: yValues,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+              }]
+            },
+            options: {
+                plugins: {
+                    autocolors,
+                    legend: {
+                        display: false
+                    }
+                },
+                title: {
+                    display: false,
+                    text: "Principales temas para pajas"
+                }
+            }
+        });
+
 
     }
 
@@ -431,6 +472,81 @@ $(document).ready(function() {
     });
 
 
+    // Gestionar botones de añadir entradas
+
+    // PAJA
+    // Show the pop-up when the button is clicked
+    $('#addPaja').click(function () {
+        $('#popup-overlay-paja, #popup-modal-paja').fadeIn();
+
+      // Close the pop-up
+      $('#cancel-btn-paja').click(function () {
+        $('#popup-overlay-paja, #popup-modal-paja').fadeOut();
+      });
+
+      // Confirm and fill the text input
+      $('#confirm-btn-paja').click(function () {
+        var finalText = "";
+        finalText += "(" + $('#horaPaja').val() + ", ";
+        finalText += $('#duracionPaja').val() + ", ";
+        finalText += $('#tipoPaja').val() + ", ";
+        finalText += $('#temaPaja').val() + ")";
+
+        if ($('#pajas').val() != ""){
+            $('#pajas').val($('#pajas').val() + ", ");
+        }
+        $('#pajas').val($('#pajas').val() + finalText);
+
+
+
+        // Close the modal
+        $('#popup-overlay-paja, #popup-modal-paja').fadeOut();
+
+        // Clear inputs
+        $('#horaPaja').val('');
+        $('#duracionPaja').val('');
+        $('#tipoPaja').val('');
+        $('#temaPaja').val('');
+        finalText = "";
+      });
+      
+    });
+
+    // Cagar
+    // Show the pop-up when the button is clicked
+    $('#addCagar').click(function () {
+        $('#popup-overlay-cagar, #popup-modal-cagar').fadeIn();
+
+      // Close the pop-up
+      $('#cancel-btn-cagar').click(function () {
+        $('#popup-overlay-cagar, #popup-modal-cagar').fadeOut();
+      });
+
+      // Confirm and fill the text input
+      $('#confirm-btn-cagar').click(function () {
+        var finalText = "";
+        finalText += "(" + $('#horaCagar').val() + ", ";
+        finalText += $('#tiempoCagar').val() + ", ";
+        finalText += $('#tiempoLimpiar').val() + ")";
+
+        if ($('#cagar').val() != ""){
+            $('#cagar').val($('#cagar').val() + ", ");
+        }
+        $('#cagar').val($('#cagar').val() + finalText);
+
+
+
+        // Close the modal
+        $('#popup-overlay-cagar, #popup-modal-cagar').fadeOut();
+
+        // Clear inputs
+        $('#horaCagar').val('');
+        $('#tiempoCagar').val('');
+        $('#tiempoLimpiar').val('');
+        finalText = "";
+      });
+
+    });
 
     // Cargar reporte para modificar
     $('#load-report').click(function() {
@@ -445,10 +561,10 @@ $(document).ready(function() {
     $('#load-report').prop("disabled",true);
     $('#select-date').change(function() {
         $('#load-report').prop("disabled",false);
-        if (csvContent.find(entry => entry.fecha !== $('#select-date').val())){
-            $('#load-report').html("Cargar Reporte\nATENCIÓN: la fecha aun no tiene reportes");
-        }else{
+        if (csvContent.find(entry => entry.fecha == $('#select-date').val())){
             $('#load-report').html("Cargar Reporte");
+        }else{
+            $('#load-report').html("Cargar Reporte\nATENCIÓN: la fecha aun no tiene reportes");
         }
     });
 
@@ -525,17 +641,17 @@ $(document).ready(function() {
         const newReport = {
             fecha: formDataObject.fecha,
             despertar: formDataObject.despertar,
-            comida: formDataObject.comida,
+            comida: formDataObject.comida.replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u"),
             cagar: formDataObject.cagar,
             ducha: duchaVal,
             afeitar: afeitarVal,
             peso: formDataObject.peso,
             ejercicio: formDataObject.ejercicio,
-            pajas: formDataObject.pajas,
+            pajas: formDataObject.pajas.replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u"),
             dormir: formDataObject.dormir,
             mood: formDataObject.mood,
             fatiga: formDataObject.fatiga,
-            otros: formDataObject.otros
+            otros: formDataObject.otros.replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u")
         };
     
         // Actualizar el CSV con la nueva o modificada entrada
@@ -606,4 +722,34 @@ $(document).ready(function() {
         const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado"];
         return daysOfWeek[date.getDay()];
     }
+
+    function GetURLParameter(sParam) {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++) {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam) {
+                return sParameterName[1];
+            }
+        }
+        return "";
+    }
+
+    function getTimeDifference(startTime, endTime) {
+        // Parse the input times
+        var start = moment(startTime, "HH:mm");
+        var end = moment(endTime, "HH:mm");
+
+        // If the end time is before the start time, add 1 day to the end time
+        if (end.isBefore(start)) {
+            end.add(1, 'days');
+        }
+
+        // Calculate the difference in hours
+        var duration = moment.duration(end.diff(start));
+        var hours = duration.asHours();
+
+        return hours;
+    }
+
 });

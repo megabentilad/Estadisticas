@@ -11,6 +11,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.js" integrity="sha512-7DgGWBKHddtgZ9Cgu8aGfJXvgcVv4SWSESomRtghob4k4orCBUTSRQ4s5SaC2Rz+OptMqNk0aHHsaUBk6fzIXw==" crossorigin="anonymous" referrerpolicy="no-referrer" type="module"></script>
     -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-autocolors"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <script src="script.js"></script>
     <link rel="shortcut icon" href="favicon-32x32.png"/>
 </head>
 <body>
@@ -37,22 +40,38 @@
                 <input type="text" id="comida" name="comida"><br><br>
 
                 <label for="cagar">Cagar:</label>
-                <input type="text" id="cagar" name="cagar"><br><br>
+                <div class="input-container">
+                    <input type="text" id="cagar" name="cagar">
+                    <button type="button" id="addCagar"><b>+</b></button><br><br>
+                </div>
+                <br><br>
 
-                <label for="ducha">Ducha:</label>
-                <input type="checkbox" id="ducha" name="ducha" value="si"><br><br>
+                <div class="input-container">
+                    <label for="ducha">Ducha:</label>
+                    <input type="checkbox" id="ducha" name="ducha" value="si">
+                </div>
+                <br><br>
 
-                <label for="afeitar">Afeitar:</label>
-                <input type="checkbox" id="afeitar" name="afeitar" value="si"><br><br>
+                <div class="input-container">
+                    <label for="afeitar">Afeitar:</label>
+                    <input type="checkbox" id="afeitar" name="afeitar" value="si">
+                </div>
+                <br><br>
 
                 <label for="peso">Peso:</label>
                 <input type="text" id="peso" name="peso"><br><br>
 
                 <label for="ejercicio">Ejercicio:</label>
-                <input type="text" id="ejercicio" name="ejercicio"><br><br>
+                <select name="ejercicio" id="ejercicio">
+                    <option value="sentadillas">sentadillas</option>
+                    <option value="ring fit adventure">ring fit adventure</option>
+                </select><br><br>
 
                 <label for="pajas">Pajas:</label>
-                <input type="text" id="pajas" name="pajas"><br><br>
+                <div class="input-container">
+                    <input type="text" id="pajas" name="pajas">
+                    <button type="button" id="addPaja"><b>+</b></button><br><br>
+                </div>
 
                 <label for="dormir">Dormir:</label>
                 <input type="text" id="dormir" name="dormir"><br><br>
@@ -69,6 +88,55 @@
                 <button type="submit" id="save-report">Guardar Reporte</button>
                 <button type="button" id="back-to-selector">Volver</button>
             </form>
+            <div class="popup-overlay" id="popup-overlay-cagar">
+                <div class="popup-modal" id="popup-modal-cagar">
+                    <h3>Nueva cagación</h3>
+                    <label for="horaCagar">Hora:</label>
+                    <input type="time" id="horaCagar"><br><br>
+                    <label for="tiempoCagar">Tiempo cagando:</label>
+                    <input type="time" id="tiempoCagar"><br><br>
+                    <label for="tiempoLimpiar">Tiempo limpiando:</label>
+                    <input type="time" id="tiempoLimpiar"><br><br>
+
+                    <button type="button" id="confirm-btn-cagar">Confirmar</button>
+                    <button type="button" id="cancel-btn-cagar">Cancelar</button>
+                </div>
+            </div>
+            <div class="popup-overlay" id="popup-overlay-paja">
+                <div class="popup-modal" id="popup-modal-paja">
+                    <h3>Nueva paja</h3>
+                    <label for="horaPaja">Hora:</label>
+                    <input type="time" id="horaPaja"><br><br>
+
+                    <label for="duracionPaja">Duración:</label>
+                    <select id="duracionPaja">
+                        <option value="corta">corta (0-10 min)</option>
+                        <option value="normal">normal (10-40 min)</option>
+                        <option value="larga">larga (40+ min)</option>
+                    </select><br><br>
+
+                    <label for="tipoPaja">Tipo de material:</label>
+                    <select id="tipoPaja">
+                        <option value="manga">manga</option>
+                        <option value="comic">comic</option>
+                        <option value="real">real</option>
+                        <option value="imaginacion">imaginacion</option>
+                    </select><br><br>
+
+                    <label for="temaPaja">Tema:</label>
+                    <input type="text" id="temaPaja" name="temaPaja" list="temasPrincipalesPaja"><br><br>
+                    <datalist id="temasPrincipalesPaja">
+                        <option value="furry">furry</option>
+                        <option value="ruido">ruido</option>
+                        <option value="latina">latina</option>
+                        <option value="amigos">amigos</option>
+                        <option value="genderbend">genderbend</option>
+                    </datalist>
+
+                    <button type="button" id="confirm-btn-paja">Confirmar</button>
+                    <button type="button" id="cancel-btn-paja">Cancelar</button>
+                </div>
+            </div>
         </div>
 
         <!-- Modificar reporte -->
@@ -107,11 +175,14 @@
                     <h3>Principales temas para pajas</h3>
                     <canvas id="chartPajasTheme"></canvas>
                 </div>
+
+                <div class="chartDiv">
+                    <h3>Horas de sueño</h3>
+                    <canvas id="chartHorasSueño"></canvas>
+                </div>
             </div>
 
         </div>
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>
