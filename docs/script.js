@@ -22,7 +22,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimocuarto commit");
+    console.log("Vigésimocuarto commit - 1");
     inicio();
     
     function inicio(){
