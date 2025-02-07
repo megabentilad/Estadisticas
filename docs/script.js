@@ -22,7 +22,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimocuarto commit - 1");
+    console.log("Vigésimocuarto commit - 2");
     inicio();
     
     function inicio(){
@@ -226,6 +226,9 @@ $(document).ready(function() {
 
         };
 
+        const finDeSemanaSegmento = (ctx, value) => checkIfWeekendSegment(ctx.chart.data.labels[ctx.p0DataIndex]) ? value : undefined;
+        const finDeSemanaDia = (ctx, value) => checkIfWeekend(ctx.chart.data.labels[ctx.p0DataIndex]) ? value : undefined;
+
         new Chart("chartHorasSueño", {
             type: "line",
             data: {
@@ -234,7 +237,11 @@ $(document).ready(function() {
                 data: yValues,
                 fill: false,
                 borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                tension: 0.1,
+                segment: {
+                    borderColor: ctx => finDeSemanaSegmento(ctx, 'rgb(192,75,75)'),
+                    pointBorderColor: ctx => finDeSemanaDia(ctx, 'rgb(192,75,75)')
+                }
               }]
             },
             options: {
@@ -242,14 +249,59 @@ $(document).ready(function() {
                     autocolors,
                     legend: {
                         display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                          label: function (context) {
+                            const value = context.raw;
+                            const hours = Math.trunc(context.raw);
+                            const minutes = Math.trunc((context.raw - Math.trunc(context.raw)) * 60);
+                            return `${Math.trunc(value*100)/100} horas -> ${hours}:${minutes}`;
+                          },
+                          title: function (context) {
+                            const dia = getWeekDay(context[0].label);
+                            return `${dia} ${context[0].label}`;
+                          }
+                        }
                     }
                 },
                 title: {
                     display: false,
-                    text: "Principales temas para pajas"
-                }
+                    text: "Horas de sueño"
+                },
             }
         });
+
+        var totalDormidoSemana = 0;
+        var totalDormidoFinDeSemana = 0;
+
+        var diasSemana = 0;
+        var diasFinde = 0;
+
+        for (let i = 1; i < csvContent.length; i++) {
+            if (checkIfWeekend(csvContent[i].fecha)) {
+                totalDormidoFinDeSemana += getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar);
+                diasFinde ++;
+                console.log(getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar))
+            }else{
+                totalDormidoSemana += getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar);
+                diasSemana ++;
+            }
+        };
+        
+        var mediaSemanaHoras = Math.trunc(totalDormidoSemana/diasSemana);
+        var mediaSemanaMinutos = Math.trunc(((totalDormidoSemana/diasSemana) - mediaSemanaHoras) * 60);
+        var mediaFindeHoras = Math.trunc(totalDormidoFinDeSemana/diasFinde);
+        var mediaFineMinutos = Math.trunc(((totalDormidoFinDeSemana/diasFinde) - mediaFindeHoras) * 60);
+        var mediaTotalHoras = Math.trunc((totalDormidoSemana+totalDormidoFinDeSemana)/(diasSemana + diasFinde));
+        var mediaTotalMinutos = Math.trunc((((totalDormidoSemana+totalDormidoFinDeSemana)/(diasSemana + diasFinde)) - mediaSemanaHoras) * 60);
+
+        $("#chartHorasSueñoExtra").append(`
+            <p><b>Media sueño semana: </b>${mediaSemanaHoras}:${mediaSemanaMinutos.toString().padStart(2, '0')}</p>
+            <p><b>Media sueño fin de semana: </b>${mediaFindeHoras}:${mediaFineMinutos.toString().padStart(2, '0')}</p>
+            <p><b>Media sueño: </b>${mediaTotalHoras}:${mediaTotalMinutos.toString().padStart(2, '0')}</p>
+        `);
+        
 
 
     }
@@ -720,7 +772,12 @@ $(document).ready(function() {
 
     function getWeekDay(date) {
         const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado"];
-        return daysOfWeek[date.getDay()];
+        return daysOfWeek[new Date(date).getDay()];
+    }
+
+    function getPreviousWeekDay(date) {
+        const daysOfWeek = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado", "Domingo"];
+        return daysOfWeek[new Date(date).getDay()];
     }
 
     function GetURLParameter(sParam) {
@@ -750,6 +807,26 @@ $(document).ready(function() {
         var hours = duration.asHours();
 
         return hours;
+    }
+
+    function checkIfWeekendSegment(date) {
+        if (getPreviousWeekDay(date) == "Sabado" || getPreviousWeekDay(date) == "Domingo") {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    function checkIfWeekend(date) {
+        if (getWeekDay(date) == "Sabado" || getWeekDay(date) == "Domingo") {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    function aaa(cosa){
+        console.log(cosa);
     }
 
 });
