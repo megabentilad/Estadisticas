@@ -22,7 +22,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimocuarto commit - 2");
+    console.log("Vigésimocuarto commit - 3");
     inicio();
     
     function inicio(){
@@ -317,6 +317,7 @@ $(document).ready(function() {
         var pesoTotal = 0;
         var vecesSentadillasTotal = 0;
         var vecesRingFitTotal = 0;
+        var vecesCorrer = 0;
         var vecesPajasTotal = 0;
 
 
@@ -360,6 +361,9 @@ $(document).ready(function() {
             if (csvContent[i].ejercicio == "ring fit adventure"){
                 vecesRingFitTotal ++;
             }
+            if (csvContent[i].ejercicio == "correr"){
+                vecesCorrer ++;
+            }
 
             // Pajas
             vecesPajasTotal += csvContent[i].pajas.split("),").length;
@@ -367,10 +371,10 @@ $(document).ready(function() {
 
         // Escribir la info en el div
         const subsections = [
-            { title: "Cagar", text: "Total de cagaciones = " + vecesCagadoTotal + "<br>Media de cagaciones al día = " + (vecesCagadoTotal / csvContent.length).toFixed(1) + "<br><br>Tiempo total cagando = " + secondsToTime(tiempoCagadoTotal) + "<br>Media tiempo cagando = " + secondsToTime((tiempoCagadoTotal / csvContent.length)) + "<br>Tiempo total limpiando = " + secondsToTime(tiempoCagadoLimpiarTotal) + "<br>Media tiempo limpiando = " + secondsToTime((tiempoCagadoLimpiarTotal / csvContent.length)) + "<br><br>Tiempo en el baño total = " + secondsToTime(tiempoCagadoLimpiarTotal + tiempoCagadoTotal) + "<br>Media de tiempo en el baño = " + secondsToTime(((tiempoCagadoTotal + tiempoCagadoLimpiarTotal) / csvContent.length)) },
+            { title: "Cagar", text: "Total de cagaciones = " + vecesCagadoTotal + "<br>Media de cagaciones al día = " + (vecesCagadoTotal / csvContent.length).toFixed(1) + "<br><br>Tiempo total cagando = " + secondsToTime(tiempoCagadoTotal) + "<br>Media tiempo cagando = " + secondsToTime((tiempoCagadoTotal / vecesCagadoTotal)) + "<br>Tiempo total limpiando = " + secondsToTime(tiempoCagadoLimpiarTotal) + "<br>Media tiempo limpiando = " + secondsToTime((tiempoCagadoLimpiarTotal / vecesCagadoTotal)) + "<br><br>Tiempo en el baño total = " + secondsToTime(tiempoCagadoLimpiarTotal + tiempoCagadoTotal) + "<br>Media de tiempo en el baño = " + secondsToTime(((tiempoCagadoTotal + tiempoCagadoLimpiarTotal) / vecesCagadoTotal)) },
             { title: "Aseo", text: "Total de duchas = " + vecesDuchaTotal + "<br>Media de duchas semanal = " + (vecesDuchaTotal / (csvContent.length / 7)).toFixed(1) + "<br><br>Total de afeitaciones = " + vecesAfeitarTotal + "<br>Media de afeitaciones semanal = " + (vecesAfeitarTotal / (csvContent.length / 7)).toFixed(1) },
             { title: "Peso", text: "Media de peso = " + (pesoTotal / csvContent.length).toFixed(1) },
-            { title: "Ejercicio", text: "Total de dias sentadillas = " + vecesSentadillasTotal + "<br>Total dias ring fit = " + vecesRingFitTotal + "<br><br>Media dias ejercicio a la semana = " + ((vecesSentadillasTotal + vecesRingFitTotal) / (csvContent.length / 7)).toFixed(1) },
+            { title: "Ejercicio", text: "Total de dias sentadillas = " + vecesSentadillasTotal + "<br>Total dias ring fit = " + vecesRingFitTotal + "<br>Total dias correr = " + vecesCorerr + "<br><br>Media dias ejercicio a la semana = " + ((vecesSentadillasTotal + vecesRingFitTotal + vecesCorrer) / (csvContent.length / 7)).toFixed(1) },
             { title: "Pajas", text: "Total de pajas = " + vecesPajasTotal + "<br>Media de pajas al día = " + (vecesPajasTotal / csvContent.length).toFixed(1) },
         ];
 
