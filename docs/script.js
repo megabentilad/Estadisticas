@@ -22,7 +22,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimocuarto commit - 3");
+    console.log("Vigésimocuarto commit - 4");
     inicio();
     
     function inicio(){
@@ -374,7 +374,7 @@ $(document).ready(function() {
             { title: "Cagar", text: "Total de cagaciones = " + vecesCagadoTotal + "<br>Media de cagaciones al día = " + (vecesCagadoTotal / csvContent.length).toFixed(1) + "<br><br>Tiempo total cagando = " + secondsToTime(tiempoCagadoTotal) + "<br>Media tiempo cagando = " + secondsToTime((tiempoCagadoTotal / vecesCagadoTotal)) + "<br>Tiempo total limpiando = " + secondsToTime(tiempoCagadoLimpiarTotal) + "<br>Media tiempo limpiando = " + secondsToTime((tiempoCagadoLimpiarTotal / vecesCagadoTotal)) + "<br><br>Tiempo en el baño total = " + secondsToTime(tiempoCagadoLimpiarTotal + tiempoCagadoTotal) + "<br>Media de tiempo en el baño = " + secondsToTime(((tiempoCagadoTotal + tiempoCagadoLimpiarTotal) / vecesCagadoTotal)) },
             { title: "Aseo", text: "Total de duchas = " + vecesDuchaTotal + "<br>Media de duchas semanal = " + (vecesDuchaTotal / (csvContent.length / 7)).toFixed(1) + "<br><br>Total de afeitaciones = " + vecesAfeitarTotal + "<br>Media de afeitaciones semanal = " + (vecesAfeitarTotal / (csvContent.length / 7)).toFixed(1) },
             { title: "Peso", text: "Media de peso = " + (pesoTotal / csvContent.length).toFixed(1) },
-            { title: "Ejercicio", text: "Total de dias sentadillas = " + vecesSentadillasTotal + "<br>Total dias ring fit = " + vecesRingFitTotal + "<br>Total dias correr = " + vecesCorerr + "<br><br>Media dias ejercicio a la semana = " + ((vecesSentadillasTotal + vecesRingFitTotal + vecesCorrer) / (csvContent.length / 7)).toFixed(1) },
+            { title: "Ejercicio", text: "Total de dias sentadillas = " + vecesSentadillasTotal + "<br>Total dias ring fit = " + vecesRingFitTotal + "<br>Total dias correr = " + vecesCorrer + "<br><br>Media dias ejercicio a la semana = " + ((vecesSentadillasTotal + vecesRingFitTotal + vecesCorrer) / (csvContent.length / 7)).toFixed(1) },
             { title: "Pajas", text: "Total de pajas = " + vecesPajasTotal + "<br>Media de pajas al día = " + (vecesPajasTotal / csvContent.length).toFixed(1) },
         ];
 
