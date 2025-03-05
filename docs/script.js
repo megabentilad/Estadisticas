@@ -22,7 +22,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimocuarto commit - 4");
+    console.log("Vigésimoquinto commit");
     inicio();
     
     function inicio(){
@@ -172,7 +172,7 @@ $(document).ready(function() {
             //console.log("xValues: " + xValues);
             //console.log("yValues: " + yValues);
         }
-        console.log(allThemesRepeated);
+        //console.log(allThemesRepeated);
         allThemesRepeated.forEach(function (x) { 
             pajaTemas[x] = (pajaTemas[x] || 0) + 1;
         });
@@ -226,8 +226,11 @@ $(document).ready(function() {
 
         };
 
-        const finDeSemanaSegmento = (ctx, value) => checkIfWeekendSegment(ctx.chart.data.labels[ctx.p0DataIndex]) ? value : undefined;
-        const finDeSemanaDia = (ctx, value) => checkIfWeekend(ctx.chart.data.labels[ctx.p0DataIndex]) ? value : undefined;
+        const finDeSemanaSegmento = (ctx) => checkIfWeekendSegment(ctx.chart.data.labels[ctx.p0DataIndex]);
+        const finDeSemanaDia = (ctx) => checkIfWeekend(ctx.chart.data.labels[ctx.p0DataIndex]);
+        const vacaciones = ["2025-03-03","2025-03-04"];
+        const festivos = ["2025-04-17","2025-04-18","2025-04-23"];
+        var segmentColor = '';
 
         new Chart("chartHorasSueño", {
             type: "line",
@@ -239,8 +242,32 @@ $(document).ready(function() {
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1,
                 segment: {
-                    borderColor: ctx => finDeSemanaSegmento(ctx, 'rgb(192,75,75)'),
-                    pointBorderColor: ctx => finDeSemanaDia(ctx, 'rgb(192,75,75)')
+                    borderColor: ctx => {
+                        let finalSegmentColor = "";
+                        if (finDeSemanaSegmento(ctx)) {
+                            finalSegmentColor = 'rgb(192,75,75)'; 
+                        }
+                        if (ctx.p0DataIndex in vacaciones){
+                            finalSegmentColor = 'rgb(245, 0, 233)';
+                        }
+                        if (ctx.p0DataIndex in festivos){
+                            finalSegmentColor = 'rgb(0, 230, 11)';
+                        }
+                        return finalSegmentColor;
+                    },
+                    pointBorderColor: ctx => {
+                        let finalSegmentColor = "";
+                        if (finDeSemanaSegmento(ctx)) {
+                            finalSegmentColor = 'rgb(192,75,75)'; 
+                        }
+                        if (ctx.p0DataIndex in vacaciones){
+                            finalSegmentColor = 'rgb(245, 0, 233)';
+                        }
+                        if (ctx.p0DataIndex in festivos){
+                            finalSegmentColor = 'rgb(0, 230, 11)';
+                        }
+                        return finalSegmentColor;
+                    }
                 }
               }]
             },
@@ -282,7 +309,7 @@ $(document).ready(function() {
             if (checkIfWeekend(csvContent[i].fecha)) {
                 totalDormidoFinDeSemana += getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar);
                 diasFinde ++;
-                console.log(getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar))
+                //console.log(getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar))
             }else{
                 totalDormidoSemana += getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar);
                 diasSemana ++;
@@ -333,7 +360,9 @@ $(document).ready(function() {
                 vecesCagadoTotal ++;
                 tiempoCagadoTotal += timeToSeconds(subLine[1]);
                 tiempoCagadoLimpiarTotal += timeToSeconds(subLine[2]);
-                //console.log("    tiempo cagando: " + subLine[1]);
+                console.log(csvContent[i].fecha);
+                console.log("    tiempo cagando: " + subLine[1]);
+                console.log("    tiempo cagando total: " + tiempoCagadoTotal);
                 //console.log("    tiempo limpiando: " + subLine[2]);
                 //console.log("    tiempo limpiando total: " + tiempoCagadoLimpiarTotal);
             });
@@ -369,7 +398,11 @@ $(document).ready(function() {
             vecesPajasTotal += csvContent[i].pajas.split("),").length;
         }
 
+        // Vaciar la lista de medias
+        $('#medias-div').empty();
+
         // Escribir la info en el div
+        $
         const subsections = [
             { title: "Cagar", text: "Total de cagaciones = " + vecesCagadoTotal + "<br>Media de cagaciones al día = " + (vecesCagadoTotal / csvContent.length).toFixed(1) + "<br><br>Tiempo total cagando = " + secondsToTime(tiempoCagadoTotal) + "<br>Media tiempo cagando = " + secondsToTime((tiempoCagadoTotal / vecesCagadoTotal)) + "<br>Tiempo total limpiando = " + secondsToTime(tiempoCagadoLimpiarTotal) + "<br>Media tiempo limpiando = " + secondsToTime((tiempoCagadoLimpiarTotal / vecesCagadoTotal)) + "<br><br>Tiempo en el baño total = " + secondsToTime(tiempoCagadoLimpiarTotal + tiempoCagadoTotal) + "<br>Media de tiempo en el baño = " + secondsToTime(((tiempoCagadoTotal + tiempoCagadoLimpiarTotal) / vecesCagadoTotal)) },
             { title: "Aseo", text: "Total de duchas = " + vecesDuchaTotal + "<br>Media de duchas semanal = " + (vecesDuchaTotal / (csvContent.length / 7)).toFixed(1) + "<br><br>Total de afeitaciones = " + vecesAfeitarTotal + "<br>Media de afeitaciones semanal = " + (vecesAfeitarTotal / (csvContent.length / 7)).toFixed(1) },
@@ -683,6 +716,9 @@ $(document).ready(function() {
 
     // Guardar el reporte actualizado
     function saveReport(formData) {
+        let formularioBien = true;
+        let erroresFormulario = "";
+
         var duchaVal = "si"
         var afeitarVal = "si"
         if (!$('#ducha').is(':checked')){
@@ -694,56 +730,99 @@ $(document).ready(function() {
         const formDataObject = Object.fromEntries(
             formData.map(field => [field.name, field.value])
         );
-        const newReport = {
-            fecha: formDataObject.fecha,
-            despertar: formDataObject.despertar,
-            comida: formDataObject.comida.replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u"),
-            cagar: formDataObject.cagar,
-            ducha: duchaVal,
-            afeitar: afeitarVal,
-            peso: formDataObject.peso,
-            ejercicio: formDataObject.ejercicio,
-            pajas: formDataObject.pajas.replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u"),
-            dormir: formDataObject.dormir,
-            mood: formDataObject.mood,
-            fatiga: formDataObject.fatiga,
-            otros: formDataObject.otros.replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u")
-        };
-    
-        // Actualizar el CSV con la nueva o modificada entrada
-        var updatedCSV = [...csvContent.filter(report => report.fecha !== formData[0].value), newReport];
 
-        // Ordenar el CSV por fecha
-        updatedCSV.sort(function(a, b) {
-            return new Date(a.fecha) - new Date(b.fecha);
-        });
-    
-        console.log("Contenido de updatedCSV:");
-        console.log(updatedCSV);
-        // Convertir de nuevo a CSV
-        var csvText = "seq=;\n" + "dia;despertar;comida;cagar;ducha;afeitar;peso;ejercicio;pajas;dormir;mood;fatiga;otros\n"
-        csvText += updatedCSV.map(entry => {
-            return `${entry.fecha};${entry.despertar};${entry.comida};${entry.cagar};${entry.ducha};${entry.afeitar};${entry.peso};${entry.ejercicio};${entry.pajas};${entry.dormir};${entry.mood};${entry.fatiga};${entry.otros}`;
-        }).join('\n');
-    
-        console.log("Contenido de csvText:");
-        console.log(csvText);
-        // Obtener el SHA del archivo existente
-        const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
-        $.ajax({
-            url: url,
-            method: 'GET',
-            headers: {
-                'Authorization': `token ${tokenEditar}`
-            },
-            success: function(response) {
-                const sha = response.sha;  // SHA del archivo existente
-                updateFile(csvText, sha);
-            },
-            error: function() {
-                alert('Error al obtener el archivo para obtener el SHA');
-            }
-        });
+        // Comprobar el formato de los datos
+        let horaRegex = "^(?:[01]\d|2[0-3]):[0-5]\d$";
+        let cagarRegex = "^\((?:([01]\d|2[0-3]):[0-5]\d, [1-9]?:[0-5]\d, [1-9]?:[0-5]\d)?\)$";
+        let pajasRegex = "^\((?:([01]\d|2[0-3]):[0-5]\d, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z]+)?\)$";
+
+        if (!horaRegex.test(formDataObject.despertar)) {
+            $('#despertar').addClass('error');
+            formularioBien = false;
+            erroresFormulario += "despertar, ";
+        } else {
+            $('#despertar').removeClass('error');
+        }
+        
+        if (!horaRegex.test(formDataObject.dormir)) {
+            $('#dormir').addClass('error');
+            formularioBien = false;
+            erroresFormulario += "dormir, ";
+        } else {
+            $('#dormir').removeClass('error');
+        }
+
+        if (!cagarRegex.test(formDataObject.cagar)) {
+            $('#cagar').addClass('error');
+            formularioBien = false;
+            erroresFormulario += "cagar, ";
+        } else {
+            $('#cagar').removeClass('error');
+        }
+
+        if (!pajasRegex.test(formDataObject.pajas)) {
+            $('#pajas').addClass('error');
+            formularioBien = false;
+            erroresFormulario += "pajas, ";
+        } else {
+            $('#pajas').removeClass('error');
+        }
+
+
+        if (formularioBien){
+            const newReport = {
+                fecha: formDataObject.fecha,
+                despertar: formDataObject.despertar,
+                comida: formDataObject.comida.replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u"),
+                cagar: formDataObject.cagar,
+                ducha: duchaVal,
+                afeitar: afeitarVal,
+                peso: formDataObject.peso,
+                ejercicio: formDataObject.ejercicio,
+                pajas: formDataObject.pajas.replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u"),
+                dormir: formDataObject.dormir,
+                mood: formDataObject.mood,
+                fatiga: formDataObject.fatiga,
+                otros: formDataObject.otros.replace("á","a").replace("é","e").replace("í","i").replace("ó","o").replace("ú","u")
+            };
+        
+            // Actualizar el CSV con la nueva o modificada entrada
+            var updatedCSV = [...csvContent.filter(report => report.fecha !== formData[0].value), newReport];
+
+            // Ordenar el CSV por fecha
+            updatedCSV.sort(function(a, b) {
+                return new Date(a.fecha) - new Date(b.fecha);
+            });
+        
+            console.log("Contenido de updatedCSV:");
+            console.log(updatedCSV);
+            // Convertir de nuevo a CSV
+            var csvText = "seq=;\n" + "dia;despertar;comida;cagar;ducha;afeitar;peso;ejercicio;pajas;dormir;mood;fatiga;otros\n"
+            csvText += updatedCSV.map(entry => {
+                return `${entry.fecha};${entry.despertar};${entry.comida};${entry.cagar};${entry.ducha};${entry.afeitar};${entry.peso};${entry.ejercicio};${entry.pajas};${entry.dormir};${entry.mood};${entry.fatiga};${entry.otros}`;
+            }).join('\n');
+        
+            console.log("Contenido de csvText:");
+            console.log(csvText);
+            // Obtener el SHA del archivo existente
+            const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+            $.ajax({
+                url: url,
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${tokenEditar}`
+                },
+                success: function(response) {
+                    const sha = response.sha;  // SHA del archivo existente
+                    updateFile(csvText, sha);
+                },
+                error: function() {
+                    alert('Error al obtener el archivo para obtener el SHA');
+                }
+            });
+        }else{
+            alert("Hay errores en " + erroresFormulario);
+        }
     }
     
     function updateFile(csvText, sha) {
