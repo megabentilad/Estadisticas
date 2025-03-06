@@ -22,7 +22,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimoquinto commit");
+    console.log("Vigésimoquinto commit - 1");
     inicio();
     
     function inicio(){
@@ -241,29 +241,32 @@ $(document).ready(function() {
                 fill: false,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1,
+                pointRadius: 2,
                 segment: {
                     borderColor: ctx => {
-                        let finalSegmentColor = "";
+                        let finalSegmentColor = 'rgb(75, 192, 192)';
+                        let currentDate, nextDayDate = new Date(ctx.chart.data.labels[ctx.p0DataIndex])
+                        nextDayDate.setDate(nextDayDate.getDate() + 1)
                         if (finDeSemanaSegmento(ctx)) {
                             finalSegmentColor = 'rgb(192,75,75)'; 
                         }
-                        if (ctx.p0DataIndex in vacaciones){
+                        if (vacaciones.includes(nextDayDate.toISOString().split('T')[0])){
                             finalSegmentColor = 'rgb(245, 0, 233)';
                         }
-                        if (ctx.p0DataIndex in festivos){
+                        if (festivos.includes(nextDayDate.toISOString().split('T')[0])){
                             finalSegmentColor = 'rgb(0, 230, 11)';
                         }
                         return finalSegmentColor;
                     },
-                    pointBorderColor: ctx => {
-                        let finalSegmentColor = "";
-                        if (finDeSemanaSegmento(ctx)) {
+                    pointColor: ctx => {
+                        let finalSegmentColor = 'rgb(75, 192, 192)';
+                        if (finDeSemanaDia(ctx)) {
                             finalSegmentColor = 'rgb(192,75,75)'; 
                         }
-                        if (ctx.p0DataIndex in vacaciones){
+                        if (vacaciones.includes(ctx.chart.data.labels[ctx.p0DataIndex])){
                             finalSegmentColor = 'rgb(245, 0, 233)';
                         }
-                        if (ctx.p0DataIndex in festivos){
+                        if (festivos.includes(ctx.chart.data.labels[ctx.p0DataIndex])){
                             finalSegmentColor = 'rgb(0, 230, 11)';
                         }
                         return finalSegmentColor;
@@ -283,7 +286,17 @@ $(document).ready(function() {
                             const value = context.raw;
                             const hours = Math.trunc(context.raw);
                             const minutes = Math.trunc((context.raw - Math.trunc(context.raw)) * 60);
-                            return `${Math.trunc(value*100)/100} horas -> ${hours}:${minutes}`;
+                            let otros = "Día de semana"
+                            if (checkIfWeekend(new Date(context.label))){
+                                otros = 'Fin de semana'
+                            }
+                            if (vacaciones.includes(context.label)){
+                                otros = 'Vacaciones'
+                            }
+                            if (festivos.includes(context.label)){
+                                otros = "Festivo"
+                            }
+                            return [otros, Math.trunc(value*100)/100 + " horas -> " + hours + ":" + minutes];
                           },
                           title: function (context) {
                             const dia = getWeekDay(context[0].label);
@@ -360,9 +373,9 @@ $(document).ready(function() {
                 vecesCagadoTotal ++;
                 tiempoCagadoTotal += timeToSeconds(subLine[1]);
                 tiempoCagadoLimpiarTotal += timeToSeconds(subLine[2]);
-                console.log(csvContent[i].fecha);
-                console.log("    tiempo cagando: " + subLine[1]);
-                console.log("    tiempo cagando total: " + tiempoCagadoTotal);
+                //console.log(csvContent[i].fecha);
+                //console.log("    tiempo cagando: " + subLine[1]);
+                //console.log("    tiempo cagando total: " + tiempoCagadoTotal);
                 //console.log("    tiempo limpiando: " + subLine[2]);
                 //console.log("    tiempo limpiando total: " + tiempoCagadoLimpiarTotal);
             });
@@ -732,9 +745,9 @@ $(document).ready(function() {
         );
 
         // Comprobar el formato de los datos
-        let horaRegex = "^(?:[01]\d|2[0-3]):[0-5]\d$";
-        let cagarRegex = "^\((?:([01]\d|2[0-3]):[0-5]\d, [1-9]?:[0-5]\d, [1-9]?:[0-5]\d)?\)$";
-        let pajasRegex = "^\((?:([01]\d|2[0-3]):[0-5]\d, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z]+)?\)$";
+        let horaRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
+        let cagarRegex = /^\((?:([01]\d|2[0-3]):[0-5]\d, [1-9]?:[0-5]\d, [1-9]?:[0-5]\d)?\)$/;
+        let pajasRegex = /^\((?:([01]\d|2[0-3]):[0-5]\d, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z]+)?\)$/;
 
         if (!horaRegex.test(formDataObject.despertar)) {
             $('#despertar').addClass('error');
@@ -854,12 +867,17 @@ $(document).ready(function() {
     }
 
     function getWeekDay(date) {
-        const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado"];
+        const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
         return daysOfWeek[new Date(date).getDay()];
     }
 
     function getPreviousWeekDay(date) {
-        const daysOfWeek = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado", "Domingo"];
+        const daysOfWeek = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+        return daysOfWeek[new Date(date).getDay()];
+    }
+
+    function getNextWeekDay(date) {
+        const daysOfWeek = ["Sábado", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
         return daysOfWeek[new Date(date).getDay()];
     }
 
@@ -893,7 +911,7 @@ $(document).ready(function() {
     }
 
     function checkIfWeekendSegment(date) {
-        if (getPreviousWeekDay(date) == "Sabado" || getPreviousWeekDay(date) == "Domingo") {
+        if (getPreviousWeekDay(date) == "Sábado" || getPreviousWeekDay(date) == "Domingo") {
             return true;
         }else{
             return false;
@@ -901,7 +919,7 @@ $(document).ready(function() {
     }
 
     function checkIfWeekend(date) {
-        if (getWeekDay(date) == "Sabado" || getWeekDay(date) == "Domingo") {
+        if (getWeekDay(date) == "Sábado" || getWeekDay(date) == "Domingo") {
             return true;
         }else{
             return false;
