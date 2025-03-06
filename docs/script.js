@@ -22,7 +22,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimoquinto commit - 1");
+    console.log("Vigésimoquinto commit - 2");
     inicio();
     
     function inicio(){
@@ -746,8 +746,8 @@ $(document).ready(function() {
 
         // Comprobar el formato de los datos
         let horaRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
-        let cagarRegex = /^\((?:([01]\d|2[0-3]):[0-5]\d, [1-9]?:[0-5]\d, [1-9]?:[0-5]\d)?\)$/;
-        let pajasRegex = /^\((?:([01]\d|2[0-3]):[0-5]\d, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z]+)?\)$/;
+        let cagarRegex = /^\(\d{2}:\d{2}, \d{1,2}:\d{2}, \d{1,2}:\d{2}\)(, \(\d{2}:\d{2}, \d{1,2}:\d{2}, \d{1,2}:\d{2}\))*$/;
+        let pajasRegex = /^\(\d{2}:\d{2}, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z]+\)(, \(\d{2}:\d{2}, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z]+\))*$/;
 
         if (!horaRegex.test(formDataObject.despertar)) {
             $('#despertar').addClass('error');
