@@ -22,7 +22,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigésimoquinto commit - 2");
+    console.log("Vigesimosexto commit");
     inicio();
     
     function inicio(){
@@ -241,7 +241,7 @@ $(document).ready(function() {
                 fill: false,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1,
-                pointRadius: 2,
+                pointRadius: 4,
                 segment: {
                     borderColor: ctx => {
                         let finalSegmentColor = 'rgb(75, 192, 192)';
@@ -302,6 +302,21 @@ $(document).ready(function() {
                             const dia = getWeekDay(context[0].label);
                             return `${dia} ${context[0].label}`;
                           }
+                        }
+                    },
+                    zoom: {
+                        zoom: {
+                            wheel: {
+                                enabled: true,
+                            },
+                            pinch: {
+                                enabled: true
+                            },
+                            mode: 'x'
+                        },
+                        pan: {
+                            enabled: true,
+                            mode: 'x'
                         }
                     }
                 },
@@ -573,6 +588,29 @@ $(document).ready(function() {
         $('#choose-action').show();
     });
 
+    // Agrandar graficas
+    $(".zoomButton").click(function (e) {
+        $(this).closest(".chartDiv").addClass("fullscreen");
+        $(this).closest("h3").hide();
+        $(this).closest(".chartDiv").find(".chartExtras").hide();
+        $(this).closest(".zoomBackButton").show();
+        $(this).closest(".zoomButton").hide();
+        e.stopPropagation();
+    });
+
+    // Quitar el fullscreen de las graficas
+    $(document).click(function (event) {
+        if (!$(".chartDiv.fullscreen").length) return;
+
+        if (!$(event.target).closest(".chartDiv").length) {
+            $(".chartDiv.fullscreen").find("h3").show();
+            $(".chartDiv.fullscreen").find(".chartExtras").show();
+            $(".chartDiv.fullscreen").find(".zoomButton").show();
+            $(".chartDiv.fullscreen").removeClass("fullscreen");
+        }
+    });
+
+
 
     // Gestionar botones de añadir entradas
 
@@ -765,20 +803,24 @@ $(document).ready(function() {
             $('#dormir').removeClass('error');
         }
 
-        if (!cagarRegex.test(formDataObject.cagar)) {
-            $('#cagar').addClass('error');
-            formularioBien = false;
-            erroresFormulario += "cagar, ";
-        } else {
-            $('#cagar').removeClass('error');
+        if (formDataObject.cagar != ""){
+            if (!cagarRegex.test(formDataObject.cagar)) {
+                $('#cagar').addClass('error');
+                formularioBien = false;
+                erroresFormulario += "cagar, ";
+            } else {
+                $('#cagar').removeClass('error');
+            }
         }
 
-        if (!pajasRegex.test(formDataObject.pajas)) {
-            $('#pajas').addClass('error');
-            formularioBien = false;
-            erroresFormulario += "pajas, ";
-        } else {
-            $('#pajas').removeClass('error');
+        if (formDataObject.pajas != ""){
+            if (!pajasRegex.test(formDataObject.pajas)) {
+                $('#pajas').addClass('error');
+                formularioBien = false;
+                erroresFormulario += "pajas, ";
+            } else {
+                $('#pajas').removeClass('error');
+            }
         }
 
 
