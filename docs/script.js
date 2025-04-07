@@ -19,10 +19,12 @@ $(document).ready(function() {
     const repo = 'Estadisticas';
     const filePath = 'docs/base.csv';
 
+    const testing = false;
+
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigesimosexto commit");
+    console.log("Vigesimosexto commit - 2");
     inicio();
     
     function inicio(){
@@ -34,71 +36,90 @@ $(document).ready(function() {
     }
 
     function loadCSVContent(token) {
-        const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
-        $.ajax({
-            url: url,
-            headers: {
-                'Authorization': `token ${token}`
-            },
-            success: function(response) {
-                const rawContent = atob(response.content);
-                // Cambiar símbolos por tildes y eñes (Tildes mayúsculas y ñ mayúscula no tienen formato)
-                // TODO Esta solución destruye los datos
-                //const content = rawContent.replace("Ã¡", "á").replace("Ã©", "é").replace("Ã³", "ó").replace("Ãº", "ú").replace("Ã±", "ñ").replace("Ã", "í")
-                const content = rawContent;
+        // Lee el fichero en local si está en modo testing
+        if (testing){
+            // En una terminal en la carpeta
+            // python -m http.server 8000
+            $.ajax({
+                url: "http://localhost:8000/base.csv",
+                async: false,
+                success: function(rawContent) {
+                    csvContent = parseCSV(rawContent);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    // Handle error here
+                    console.error("Error occurred:", textStatus, errorThrown);
+                }
+            });
 
-                csvContent = parseCSV(content);
-                // Cargar las fechas disponibles para modificar reportes
-                loadAvailableDates();
+        }else{
+            const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+            $.ajax({
+                url: url,
+                async: false,
+                headers: {
+                    'Authorization': `token ${token}`
+                },
+                success: function(response) {
+                    const content = atob(response.content);
+                    // Cambiar símbolos por tildes y eñes (Tildes mayúsculas y ñ mayúscula no tienen formato)
+                    // TODO Esta solución destruye los datos
+                    //const content = rawContent.replace("Ã¡", "á").replace("Ã©", "é").replace("Ã³", "ó").replace("Ãº", "ú").replace("Ã±", "ñ").replace("Ã", "í")
+                    csvContent = parseCSV(content);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    // Handle error here
+                    console.error("Error occurred:", textStatus, errorThrown);
+                    if (tokenEditar !== null) {
+                        alert("No se ha podido obtener datos del repositorio.\nProbando de nuevo con el token de visualización.");
+                        loadCSVContent(tokenVer);
+                    }else{
+                        alert("Un problema de red evita que la página funcione. Espere unos minutos antes de intentarlo de nuevo.");
+                    }
 
-                //Mostrar los datos en consola
-                //console.log("Contenido del fichero CSV:");
-                //console.log(content);
-                //console.log("Contenido del array:");
-                //console.log(csvContent);
+                }
+            });
+        }
+        // Cargar las fechas disponibles para modificar reportes
+        loadAvailableDates();
+
+        //Mostrar los datos en consola
+        //console.log("Contenido del fichero CSV:");
+        //console.log(content);
+        //console.log("Contenido del array:");
+        //console.log(csvContent);
+        
+        //Mirar si el reporte del día ya ha sido creado y desactivar el botón si es el caso
+        if (csvContent.find(entry => entry.fecha === yesterdayDate)){
+            $('#create-report').html("Ya existe un reporte para ayer " + yesterdayWeekDay + " " + yesterdayDate);
+            $('#create-report').prop("disabled",true);
+            $('#create-report').css("background-color", "#e6834a").css("cursor", "not-allowed");
+        }else{
+            $('#create-report').html("Rellenar el reporte de ayer " + yesterdayWeekDay + " " + yesterdayDate);
+        }
+
+        // Si no hay token para editar, ocultar las opciones de edición
+        if ((tokenEditar == null) || (tokenEditar == "")) {
+            $('#create-report').hide();
+            $('#modify-report').hide();
+        }
+
+        // Comprobar que los datos son correctos y mostrar alertas en la consola
+        qualityCheck();
+
+        // Rellenar la tabla de datos en bruto
+        manageRawDatatTable();
+
+        // Analizar datos y mostrar medias
+        createBasicMedias();
+
+        // Analizar datos y mostrar gráficas
+        createGraphics();
+
+                    
+
                 
-                //Mirar si el reporte del día ya ha sido creado y desactivar el botón si es el caso
-                if (csvContent.find(entry => entry.fecha === yesterdayDate)){
-                    $('#create-report').html("Ya existe un reporte para ayer " + yesterdayWeekDay + " " + yesterdayDate);
-                    $('#create-report').prop("disabled",true);
-                    $('#create-report').css("background-color", "#e6834a").css("cursor", "not-allowed");
-                }else{
-                    $('#create-report').html("Rellenar el reporte de ayer " + yesterdayWeekDay + " " + yesterdayDate);
-                }
-
-                // Si no hay token para editar, ocultar las opciones de edición
-                if ((tokenEditar == null) || (tokenEditar == "")) {
-                    $('#create-report').hide();
-                    $('#modify-report').hide();
-                }
-
-                // Comprobar que los datos son correctos y mostrar alertas en la consola
-                qualityCheck();
-
-                // Rellenar la tabla de datos en bruto
-                manageRawDatatTable();
-
-                // Analizar datos y mostrar medias
-                createBasicMedias();
-
-                // Analizar datos y mostrar gráficas
-                createGraphics();
-
-                
-
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                // Handle error here
-                console.error("Error occurred:", textStatus, errorThrown);
-                if (tokenEditar !== null) {
-                    alert("No se ha podido obtener datos del repositorio.\nProbando de nuevo con el token de visualización.");
-                    loadCSVContent(tokenVer);
-                }else{
-                    alert("Un problema de red evita que la página funcione. Espere unos minutos antes de intentarlo de nuevo.");
-                }
-
-            }
-        });
+        
     }
 
 
@@ -160,10 +181,13 @@ $(document).ready(function() {
                 item.forEach(item2 => {
                     if (typeof item2[3] !== 'undefined'){
                         // Normalizar tipos
-                        var theme = item2[3].replace("lolicon", "loli").replace("shotacon", "shota").replace("zapping","ruido").replace("yuri","lesbianas").replace("yaoi", "gay").replace("PV","primera vez");
+                        var theme = item2[3].replace("lolicon", "loli").replace("shotacon", "shota").replace("zapping","ruido").replace("yuri","lesbianas").replace("yaoi", "gay").replace("bondage","bdsm");
 
                         allThemesRepeated.push(theme);
                     }
+                    //else{
+                    //    console.log(key + " Tiene paja undefined");
+                    //}
                 });
               });
 
@@ -186,14 +210,15 @@ $(document).ready(function() {
                 xValues.push(key);
                 yValues.push(value);
             }else{
-                otrosTemas ++
+                //console.log("paja unica: " + key);
+                otrosTemas ++;
             }
             
         }
         xValues.push("Otros");
         yValues.push(otrosTemas);
 
-        console.log(pajasObject);
+        //console.log(pajasObject);
         new Chart("chartPajasTheme", {
             type: "pie",
             data: {
@@ -785,7 +810,7 @@ $(document).ready(function() {
         // Comprobar el formato de los datos
         let horaRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
         let cagarRegex = /^\(\d{2}:\d{2}, \d{1,2}:\d{2}, \d{1,2}:\d{2}\)(, \(\d{2}:\d{2}, \d{1,2}:\d{2}, \d{1,2}:\d{2}\))*$/;
-        let pajasRegex = /^\(\d{2}:\d{2}, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z]+\)(, \(\d{2}:\d{2}, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z]+\))*$/;
+        let pajasRegex = /^\(\d{2}:\d{2}, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z ]+\)(, \(\d{2}:\d{2}, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z ]+\))*$/;
 
         if (!horaRegex.test(formDataObject.despertar)) {
             $('#despertar').addClass('error');
