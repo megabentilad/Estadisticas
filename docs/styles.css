@@ -107,11 +107,13 @@ th, td {
 }
 
 #charts-div {
-    display: flex;
+    min-width: 0;
+    overflow: auto;
+    flex-wrap: wrap;
 }
 
 .chartDiv {
-    margin: 2.5%;
+    margin: 2.25%;
     width: 45%;
     border: 2px solid black;
     border-radius: 10%;

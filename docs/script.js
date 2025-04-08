@@ -24,7 +24,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigesimosexto commit - 2");
+    console.log("Vigesimoseptimo");
     inicio();
     
     function inicio(){
@@ -155,9 +155,12 @@ $(document).ready(function() {
     function createGraphics(){
         var xValues = [];
         var yValues = [];
+        
+        
+        
+        // Chart con los temas de las pajas
         var pajasObject = {};
         var pajaTemas = {};
-        
         for (let i = 0; i < csvContent.length; i++) {
             
             pajasObject[csvContent[i].fecha] = [];
@@ -173,7 +176,6 @@ $(document).ready(function() {
             });
             pajasObject[csvContent[i].fecha].push(pajasDelDia);
         };
-        // Chart con los temas de las pajas
         var allThemesRepeated = [];
         for (const [key, value] of Object.entries(pajasObject)) {
             var counts = {};
@@ -382,7 +384,78 @@ $(document).ready(function() {
             <p><b>Media sueño: </b>${mediaTotalHoras}:${mediaTotalMinutos.toString().padStart(2, '0')}</p>
         `);
         
+        // Chart alimentacion
+        var mealsObject = {};
+        var daysLacteo = 0;
+        var daysCereal = 0;
+        var daysCarne = 0;
+        var daysVerdura = 0;
+        var daysFruta = 0;
 
+
+
+        for (let i = 0; i < csvContent.length; i++) {
+            
+
+            mealsObject[csvContent[i].fecha] = "";
+            var dailyMeals = ""
+            csvContent[i].comida.split(",").forEach(meal => {
+                // Categorizar las comidas y guardarlas en el objeto
+                meal = meal.trim().replace("leche", "lacteo").replace("cereales", "cereal").replace("galletas", "cereal").replace("bizcocho", "cereal, lacteo, carne").replace("patatas", "cereal").replace("lentejas", "cereal").replace("conguitos", "cereal, lacteo").replace("manzana", "fruta").replace("yatekomo", "cereal").replace("queso", "lacteo").replace("pollo", "carne").replace("ambrosia", "cereal, lacteo").replace("pizza", "cereal, lacteo").replace("arroz", "cereal").replace("hamburguesas", "carne").replace("pure de patata", "cereal, lacteo").replace("tortilla francesa", "carne").replace("carne", "carne").replace("flan", "lacteo").replace("tortitas", "lacteo, carne, cereal").replace("merluza", "carne").replace("huevo", "carne").replace("tortilla de patata", "carne, cereal").replace("sopa", "carne").replace("bocartes", "carne").replace("copa de chocolate", "lacteo").replace("salmon", "carne").replace("bocadillo de nocilla", "cereal, lacteo").replace("bocadillo de queso", "cereal, lacteo").replace("pasta", "cereal, lacteo").replace("bocadillo de chocolate", "cereal, lacteo").replace("salchichas", "carne").replace("hamburguesa", "carne").replace("pure", "verdura").replace("garbanzos", "cereal").replace("alubias", "cereal").replace("croquetas", "cereales, lacteo").replace("solomillo de cerdo", "carne").replace("natillas", "lacteo").replace("costilla", "carne").replace("rosquillas", "lacteo, cereal").replace("empanadillas", "carne, cereal").replace("lomo", "carne").replace("mikados", "cereal, lacteo").replace("sandwich", "cereal, lacteo, carne").replace("secreto", "carne").replace("albondigas", "carne").replace("chocolate", "lacteo").replace("nocilla", "lacteo").replace("browny", "lacteo, cereal").replace("couscous", "cereal, carne").replace("tarta", "lacteo, cereal").replace("orejas", "cereal").replace("sardinas", "carne").replace("torrijas", "lacteo, cereal").replace("jamon", "carne").replace("rabas", "carne").replace("", "")
+                if (!meal.includes("lacteo") && !meal.includes("carne") && !meal.includes("cereal") && !meal.includes("verdura") && !meal.includes("fruta")){
+                    console.log("Este alimento está sin clasificar: " + meal);
+                }
+                dailyMeals = dailyMeals + ", " + meal;
+
+            });
+            mealsObject[csvContent[i].fecha] = dailyMeals;
+            if (dailyMeals.includes("lacteo")){
+                daysLacteo ++;
+            }
+            if (dailyMeals.includes("cereal")){
+                daysCereal ++;
+            }
+            if (dailyMeals.includes("carne")){
+                daysCarne ++;
+            }
+            if (dailyMeals.includes("verdura")){
+                daysVerdura ++;
+            }
+            if (dailyMeals.includes("fruta")){
+                daysFruta ++;
+            }
+        };
+
+
+        xValues = ["Lacteos", "Animal", "Cereales y tubérculos", "Verduras", "Frutas"];
+        yValues = [(daysLacteo / csvContent.length * 100), (daysCarne / csvContent.length * 100), (daysCereal / csvContent.length * 100), (daysVerdura / csvContent.length * 100), (daysFruta / csvContent.length * 100)];
+
+        new Chart("chartAlimentacion", {
+            type: "bar",
+            data: {
+              labels: xValues,
+              datasets: [{
+                data: yValues
+              }]
+            },
+            options: {
+                plugins: {
+                    autocolors,
+                    legend: {
+                        display: false
+                    }
+                },
+                title: {
+                    display: false,
+                    text: "Tipo de alimentación"
+                }
+            }
+        });
+
+        $("#chartComidasInfo").append(`
+            <p><b>Atención:</b> Esto es una media de qué tipo de alimentos he comido en los últimos ${csvContent.length} dias.</p>
+            <p>Por ejemplo; Si a lo largo de 10 días, 5 he comido fruta, "Fruta" marcará un 50%</p>
+        `);
 
     }
 
@@ -399,7 +472,6 @@ $(document).ready(function() {
         var vecesRingFitTotal = 0;
         var vecesCorrer = 0;
         var vecesPajasTotal = 0;
-
 
         for (let i = 0; i < csvContent.length; i++) {
             //console.log("- " + csvContent[i].fecha + " -");
@@ -589,6 +661,7 @@ $(document).ready(function() {
     // Mostrar graficas
     $('#go-to-charts').click(function() {
         $('#charts-div').show();
+        $('#charts-div').css('display', 'flex').css('flex-wrap', 'wrap');
         $('#medias-div').hide();
     });
 
