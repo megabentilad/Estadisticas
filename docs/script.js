@@ -24,7 +24,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigesimoseptimo - 1");
+    console.log("Vigesimooctavo");
     inicio();
     
     function inicio(){
@@ -256,7 +256,7 @@ $(document).ready(function() {
         const finDeSemanaSegmento = (ctx) => checkIfWeekendSegment(ctx.chart.data.labels[ctx.p0DataIndex]);
         const finDeSemanaDia = (ctx) => checkIfWeekend(ctx.chart.data.labels[ctx.p0DataIndex]);
         const vacaciones = ["2025-03-03","2025-03-04"];
-        const festivos = ["2025-04-17","2025-04-18","2025-04-23"];
+        const festivos = ["2025-04-17","2025-04-18","2025-04-23","2025-05-01","2025-06-24","2025-08-15","2025-10-06","2025-10-13","2025-11-01","2025-12-06","2025-12-08","2025-12-24","2025-12-25","2025-12-31"];
         var segmentColor = '';
 
         new Chart("chartHorasSueño", {
@@ -401,7 +401,8 @@ $(document).ready(function() {
             var dailyMeals = ""
             csvContent[i].comida.split(",").forEach(meal => {
                 // Categorizar las comidas y guardarlas en el objeto
-                meal = meal.trim().replace("leche", "lacteo").replace("cereales", "cereal").replace("galletas", "cereal").replace("bizcocho", "cereal, lacteo, carne").replace("patatas", "cereal").replace("lentejas", "cereal").replace("conguitos", "cereal, lacteo").replace("manzana", "fruta").replace("yatekomo", "cereal").replace("queso", "lacteo").replace("pollo", "carne").replace("ambrosia", "cereal, lacteo").replace("pizza", "cereal, lacteo").replace("arroz", "cereal").replace("hamburguesas", "carne").replace("pure de patata", "cereal, lacteo").replace("tortilla francesa", "carne").replace("carne", "carne").replace("flan", "lacteo").replace("tortitas", "lacteo, carne, cereal").replace("merluza", "carne").replace("huevo", "carne").replace("tortilla de patata", "carne, cereal").replace("sopa", "carne").replace("bocartes", "carne").replace("copa de chocolate", "lacteo").replace("salmon", "carne").replace("bocadillo de nocilla", "cereal, lacteo").replace("bocadillo de queso", "cereal, lacteo").replace("pasta", "cereal, lacteo").replace("bocadillo de chocolate", "cereal, lacteo").replace("salchichas", "carne").replace("hamburguesa", "carne").replace("pure", "verdura").replace("garbanzos", "cereal").replace("alubias", "cereal").replace("croquetas", "cereales, lacteo").replace("solomillo de cerdo", "carne").replace("natillas", "lacteo").replace("costilla", "carne").replace("rosquillas", "lacteo, cereal").replace("empanadillas", "carne, cereal").replace("lomo", "carne").replace("mikados", "cereal, lacteo").replace("sandwich", "cereal, lacteo, carne").replace("secreto", "carne").replace("albondigas", "carne").replace("chocolate", "lacteo").replace("nocilla", "lacteo").replace("browny", "lacteo, cereal").replace("couscous", "cereal, carne").replace("tarta", "lacteo, cereal").replace("orejas", "cereal").replace("sardinas", "carne").replace("torrijas", "lacteo, cereal").replace("jamon", "carne").replace("rabas", "carne").replace("solomillo", "carne").replace("atun", "carne").replace("calamares", "carne").replace("marmitaco", "carne, cereal").replace("pajarita", "cereal, lacteo").replace("chuleta", "carne").replace("", "")
+                meal = meal.trim().replace("leche", "lacteo").replace("cereales", "cereal").replace("galletas", "cereal").replace("bizcocho", "cereal, lacteo, carne").replace("patatas", "cereal").replace("lentejas", "cereal").replace("conguitos", "cereal, lacteo").replace("manzana", "fruta").replace("yatekomo", "cereal").replace("queso", "lacteo").replace("pollo", "carne").replace("ambrosia", "cereal, lacteo").replace("pizza", "cereal, lacteo").replace("arroz", "cereal").replace("hamburguesas", "carne").replace("pure de patata", "cereal, lacteo").replace("tortilla francesa", "carne").replace("carne", "carne").replace("flan", "lacteo").replace("tortitas", "lacteo, carne, cereal").replace("merluza", "carne").replace("huevo", "carne").replace("tortilla de patata", "carne, cereal").replace("sopa", "carne").replace("bocartes", "carne").replace("copa de chocolate", "lacteo").replace("salmon", "carne").replace("bocadillo de nocilla", "cereal, lacteo").replace("bocadillo de queso", "cereal, lacteo").replace("pasta", "cereal, lacteo").replace("bocadillo de chocolate", "cereal, lacteo").replace("salchichas", "carne").replace("hamburguesa", "carne").replace("pure", "verdura").replace("garbanzos", "cereal").replace("alubias", "cereal").replace("croquetas", "cereales, lacteo").replace("gofre", "cereal").replace("chocolatina", "lacteo").replace("", "")
+                meal = meal.replace("solomillo de cerdo", "carne").replace("natillas", "lacteo").replace("costilla", "carne").replace("rosquillas", "lacteo, cereal").replace("empanadillas", "carne, cereal").replace("lomo", "carne").replace("mikados", "cereal, lacteo").replace("sandwich", "cereal, lacteo, carne").replace("secreto", "carne").replace("albondigas", "carne").replace("chocolate", "lacteo").replace("nocilla", "lacteo").replace("browny", "lacteo, cereal").replace("couscous", "cereal, carne").replace("tarta", "lacteo, cereal").replace("orejas", "cereal").replace("sardinas", "carne").replace("torrijas", "lacteo, cereal").replace("jamon", "carne").replace("rabas", "carne").replace("solomillo", "carne").replace("atun", "carne").replace("calamares", "carne").replace("marmitaco", "carne, cereal").replace("pajarita", "cereal, lacteo").replace("chuleta", "carne").replace("donetes", "lacteo, cereal").replace("filetes", "carne").replace("melon", "fruta").replace("yogur", "lacteo").replace("cuscus", "cereal, carne").replace("helado", "lacteo").replace("pastelitos", "lacteo, cereal").replace("crema", "verdura").replace("petisuis", "lacteo").replace("almendras", "cereal").replace("macedonia", "fruta").replace("batido", "lacteo").replace("corbata", "cereal").replace("ensaimada", "cereal").replace("vinagreta", "cereal").replace("kit kat", "lacteo, cereal").replace("bolleria", "lacteo, cereal").replace("pinchos morunos", "carne").replace("ojitos", "carne").replace("", "").replace("", "").replace("", "")
                 if (!meal.includes("lacteo") && !meal.includes("carne") && !meal.includes("cereal") && !meal.includes("verdura") && !meal.includes("fruta")){
                     console.log("Este alimento está sin clasificar: " + meal);
                 }
@@ -675,7 +676,7 @@ $(document).ready(function() {
         $('#modify-form').hide();
         $('#choose-action').show();
     });
-    $('#back-to-selector-raw-data').click(function() {
+    $('.back-to-selector-raw-data').click(function() {
         $('#raw-data-visualization').hide();
         $('#choose-action').show();
     });
