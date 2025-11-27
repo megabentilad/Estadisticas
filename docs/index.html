@@ -174,26 +174,73 @@
             </div>
 
             <!-- Mostrar graficas -->
-            <div id="charts-div" style="display:none;">
-                <div class="chartDiv">
-                    <div class="zoomButton">👁</div>
-                    <h3>Principales temas para pajas</h3>
-                    <canvas id="chartPajasTheme"></canvas>
+            <div id="charts-div" style="display: none;">
+                <div id="chartCategoriaButtonsDiv">
+                    <button type="button" id="go-to-chart-dormir">Dormir</button>
+                    <button type="button" id="go-to-chart-comer">Comer</button>
+                    <button type="button" id="go-to-chart-cagar">Cagar</button>
+                    <button type="button" id="go-to-chart-ejercicio">Ejercicio</button>
+                    <button type="button" id="go-to-chart-pajas">Pajas</button>
+                    <button type="button" id="go-to-chart-otros">Otros</button>
+                </div>
+                <div id="chartCategoriaDormirDiv" style="display:none;">
+                    <h3>Dormir</h3>
+                    <div class="chartDiv">
+                        <div class="zoomButton">👁</div>
+                        <h3>Horas de sueño diarias</h3>
+                        <canvas id="chartHorasSueñoDiarias"></canvas>
+                        <div class= "chartExtras" id="chartHorasSueñoDiariasExtra"></div>
+                    </div>
+
+                    <div class="chartDiv">
+                        <div class="zoomButton">👁</div>
+                        <h3>Horas de sueño semanales</h3>
+                        <canvas id="chartHorasSueñoSemanales"></canvas>
+                        <div class= "chartExtras" id="chartHorasSueñoSemanalesExtra"></div>
+                    </div>
                 </div>
 
-                <div class="chartDiv">
-                    <div class="zoomButton">👁</div>
-                    <h3>Horas de sueño</h3>
-                    <canvas id="chartHorasSueño"></canvas>
-                    <div class= "chartExtras" id="chartHorasSueñoExtra"></div>
+                <div id="chartCategoriaComerDiv" style="display:none;">
+                    <h3>Comer</h3>
+                    <div class="chartDiv">
+                        <div class="zoomButton">👁</div>
+                        <h3>Alimentación</h3>
+                        <canvas id="chartAlimentacion"></canvas>
+                        <div class= "chartExtras" id="chartComidasInfo"></div>
+                    </div>
                 </div>
 
-                <div class="chartDiv">
-                    <div class="zoomButton">👁</div>
-                    <h3>Alimentación</h3>
-                    <canvas id="chartAlimentacion"></canvas>
-                    <div class= "chartExtras" id="chartComidasInfo"></div>
+                <div id="chartCategoriaCagarDiv" style="display:none;">
+                    <h3>Cagar</h3>
                 </div>
+
+                <div id="chartCategoriaEjercicioDiv" style="display:none;">
+                    <h3>Ejercicio</h3>
+                </div>
+
+                <div id="chartCategoriaPajasDiv" style="display:none;">
+                    <h3>Pajas</h3>
+                    <div class="chartDiv" style="width: 95%;">
+                        <div class="zoomButton">👁</div>
+                        <h3>Pajas semanales</h3>
+                        <canvas id="chartPajasSemanales"></canvas>
+                        <div class= "chartExtras" id="chartPajasSemanalesInfo"></div>
+                    </div>
+
+                    <div class="chartDiv">
+                        <div class="zoomButton">👁</div>
+                        <h3>Principales temas para pajas</h3>
+                        <canvas id="chartPajasTheme"></canvas>
+                        <div class= "chartExtras" id="chartPajasTemasInfo"></div>
+                    </div>
+                </div>
+
+                <div id="chartCategoriaOtrosDiv" style="display:none;">
+                    <h3>Otros</h3>
+                </div>
+
+
+                
             </div>
 
         </div>

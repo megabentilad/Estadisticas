@@ -19,6 +19,11 @@ h1 {
     text-align: center;
 }
 
+h3 {
+    text-align: center;
+    width: 100%;
+}
+
 button {
     display: block;
     margin: 10px auto;
@@ -112,11 +117,38 @@ th, td {
     flex-wrap: wrap;
 }
 
+#chartCategoriaButtonsDiv {
+    display:flex;
+    min-width: 40%;
+    overflow: auto;
+    flex-wrap: wrap;
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+#chartCategoriaButtonsDiv button {
+    margin-bottom: 2.5%;
+    margin-left: 7.5%;
+    margin-right: 7.5%;
+    width: 35%;
+    border: 2px solid rgb(12, 44, 8);
+    border-radius: 5%;
+
+    position: relative;
+}
+
+#chartCategoriaDormirDiv, #chartCategoriaComerDiv, #chartCategoriaCagarDiv, #chartCategoriaEjercicioDiv, #chartCategoriaPajasDiv, #chartCategoriaOtrosDiv {
+    min-width: 100%;
+    display: flex;
+    overflow: auto;
+    flex-wrap: wrap;
+}
+
 .chartDiv {
     margin: 2.25%;
     width: 45%;
     border: 2px solid black;
-    border-radius: 10%;
+    border-radius: 2%;
 
     transition: all 0.3s ease-in-out;
     position: relative;

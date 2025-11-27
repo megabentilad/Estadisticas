@@ -24,7 +24,10 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigesimooctavo - 2");
+    console.log("Vigesimonoveno");
+    if (testing){
+        console.log("MODO TESTING ACTIVADO");
+    }
     inicio();
     
     function inicio(){
@@ -243,7 +246,145 @@ $(document).ready(function() {
             }
         });
 
-        // Chart con las horas de sueño
+        $("#chartPajasTemasInfo").append(`
+            <p>Esta gráfica trata de representar la temática <b>principal</b> de cada sesión</p>
+            <p><b>Otros:</b> Temáticas que solo se han utilizado una vez</p>
+            <p><b>Ruido:</b> Sesiones in una temática en concreto, doomscrolling o saltando de un lado al otro en mi mente</p>
+        `);
+
+
+        // Chart con las pajas semanales
+        var semanaAnterior = getWeekNumber(new Date(csvContent[0].fecha));
+        var marcadorSemana = [];
+        var diasCadaSemana = [];
+        var primerDiaSemana = csvContent[0].fecha;
+        var ultimoDiaSemana = "";
+        var diasSinPaja = 0;
+        var cortasSemana = 0;
+        var normalesSemana = 0;
+        var largasSemana = 0;
+        var listaNumeroCortas = [];
+        var listaNumeroNormales = [];
+        var listaNumeroLargas = [];
+        var listaTotalSemana = [];
+
+        for (let i = 1; i < csvContent.length; i++) {
+            if (primerDiaSemana == ""){
+                primerDiaSemana = csvContent[i].fecha;
+            }
+            var semanaActual = getWeekNumber(new Date(csvContent[i].fecha));
+            var cortasHoy = 0;
+            var normalesHoy = 0;
+            var largasHoy = 0;
+            csvContent[i].pajas.split("),").forEach(paj => {
+                if (paj == ""){
+                    ++diasSinPaja;
+                }
+                paj = paj.replace("(","").replace(")","");
+                const elements = paj.split(",").map(x => x.trim());
+                const tipo = elements[1]; 
+                if (tipo == "corta"){
+                    ++cortasHoy;
+                }
+                if (tipo == "normal"){
+                    ++normalesHoy;
+                }
+                if (tipo == "larga"){
+                    ++largasHoy;
+                }
+
+            });
+            if (semanaActual == semanaAnterior){
+                cortasSemana += cortasHoy;
+                normalesSemana += normalesHoy;
+                largasSemana += largasHoy;
+            }else{
+                listaNumeroCortas.push(cortasSemana);
+                listaNumeroNormales.push(normalesSemana);
+                listaNumeroLargas.push(largasSemana);
+                listaTotalSemana.push(cortasSemana + normalesSemana + largasSemana);
+                marcadorSemana.push(semanaAnterior);
+                semanaAnterior = semanaActual;
+                cortasSemana = 0;
+                normalesSemana = 0;
+                largasSemana = 0;
+
+                ultimoDiaSemana = csvContent[i].fecha;
+                diasCadaSemana.push(primerDiaSemana + " -> " + ultimoDiaSemana)
+                primerDiaSemana = "";
+
+            }
+        };
+
+        new Chart("chartPajasSemanales", {
+            type: "bar",
+            data: {
+                labels: marcadorSemana,
+                datasets: [
+                {
+                    label: 'Corta',
+                    data: listaNumeroCortas,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                },
+                {
+                    label: 'Normal',
+                    data: listaNumeroNormales,
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                },
+                {
+                    label: 'Larga',
+                    data: listaNumeroLargas,
+                    backgroundColor: 'rgba(255, 206, 86, 0.7)'
+                }
+                ]
+            },
+            options: {
+                plugins: {
+                    autocolors,
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                          title: function (context) {
+                            var diasEstaSemana = diasCadaSemana[parseInt(context[0].label, 10) - 2];
+                            var totalSemana = listaTotalSemana[parseInt(context[0].label, 10) - 2]
+                            return `${totalSemana}\nSemana Nº${context[0].label} del año\n${diasEstaSemana}`;
+                          }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true
+                    }
+                },
+                title: {
+                    display: false,
+                    text: "Pajas semanales"
+                }
+            }
+        });
+
+        var totalAnual = 0;
+        
+        for (let i = 0; i < csvContent.length; i++) {
+            totalAnual += csvContent[i].pajas.split("),").length;
+        }
+        var mediaSemanal = totalAnual / marcadorSemana.length;
+        var mediaDiaria = totalAnual / csvContent.length;
+        var mediaDiariaSelectiva = totalAnual / (csvContent.length - diasSinPaja);
+
+        $("#chartPajasSemanalesInfo").append(`
+            <p><b>Media semanal:</b> ${Math.round(mediaSemanal * 100) / 100}</p>
+            <p><b>Media diaria:</b> ${Math.round(mediaDiaria * 100) / 100}</p>
+            <p><b>Media diaria (sin contar días de 0):</b> ${Math.round(mediaDiariaSelectiva * 100) / 100}</p>
+        `);
+
+        // Chart con las horas de sueño diarias
         xValues = [];
         yValues = [];
 
@@ -259,7 +400,7 @@ $(document).ready(function() {
         const festivos = ["2025-04-17","2025-04-18","2025-04-23","2025-05-01","2025-06-24","2025-08-15","2025-10-06","2025-10-13","2025-11-01","2025-12-06","2025-12-08","2025-12-24","2025-12-25","2025-12-31"];
         var segmentColor = '';
 
-        new Chart("chartHorasSueño", {
+        new Chart("chartHorasSueñoDiarias", {
             type: "line",
             data: {
               labels: xValues,
@@ -349,7 +490,7 @@ $(document).ready(function() {
                 },
                 title: {
                     display: false,
-                    text: "Horas de sueño"
+                    text: "Horas de sueño diarias"
                 },
             }
         });
@@ -378,10 +519,91 @@ $(document).ready(function() {
         var mediaTotalHoras = Math.trunc((totalDormidoSemana+totalDormidoFinDeSemana)/(diasSemana + diasFinde));
         var mediaTotalMinutos = Math.trunc((((totalDormidoSemana+totalDormidoFinDeSemana)/(diasSemana + diasFinde)) - mediaSemanaHoras) * 60);
 
-        $("#chartHorasSueñoExtra").append(`
+        $("#chartHorasSueñoDiariasExtra").append(`
             <p><b>Media sueño semana: </b>${mediaSemanaHoras}:${mediaSemanaMinutos.toString().padStart(2, '0')}</p>
             <p><b>Media sueño fin de semana: </b>${mediaFindeHoras}:${mediaFineMinutos.toString().padStart(2, '0')}</p>
             <p><b>Media sueño: </b>${mediaTotalHoras}:${mediaTotalMinutos.toString().padStart(2, '0')}</p>
+        `);
+
+        // Chart con las horas de sueño semanales
+        xValues = [];
+        yValues = [];
+        var horasSueñoSemana = 0;
+        var semanaAnterior = getWeekNumber(new Date(csvContent[1].fecha))
+
+        for (let i = 1; i < csvContent.length; i++) {
+            var semanaActual = getWeekNumber(new Date(csvContent[i].fecha))
+            var horasDormidasHoy = getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar)
+            if (semanaActual == semanaAnterior){
+                horasSueñoSemana += horasDormidasHoy;
+            }else{
+                yValues.push(horasSueñoSemana);
+                xValues.push(semanaAnterior);
+                semanaAnterior = semanaActual;
+                horasSueñoSemana = 0;
+
+            }
+        };
+
+        new Chart("chartHorasSueñoSemanales", {
+            type: "line",
+            data: {
+              labels: xValues,
+              datasets: [{
+                data: yValues,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1,
+                pointRadius: 4
+              }]
+            },
+            options: {
+                plugins: {
+                    autocolors,
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                          label: function (context) {
+                            const value = context.raw;
+                            const hours = Math.trunc(context.raw);
+                            const minutes = Math.trunc((context.raw - Math.trunc(context.raw)) * 60);
+                            return [Math.trunc(value*100)/100 + " horas -> " + hours + ":" + minutes];
+                          },
+                          title: function (context) {
+                            return `Semana Nº${context[0].label} del año`;
+                          }
+                        }
+                    }
+                },
+                title: {
+                    display: false,
+                    text: "Horas de sueño semanales"
+                },
+            }
+        });
+
+        var totalDormidoSemana = 0;
+        var totalDormidoFinDeSemana = 0;
+
+        var diasSemana = 0;
+        var diasFinde = 0;
+
+        for (let i = 1; i < csvContent.length; i++) {
+            if (checkIfWeekend(csvContent[i].fecha)) {
+                totalDormidoFinDeSemana += getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar);
+                diasFinde ++;
+                //console.log(getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar))
+            }else{
+                totalDormidoSemana += getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar);
+                diasSemana ++;
+            }
+        };
+        
+
+        $("#chartHorasSueñoSemanalesExtra").append(`
+            <p></p>
         `);
         
         // Chart alimentacion
@@ -402,10 +624,10 @@ $(document).ready(function() {
             csvContent[i].comida.split(",").forEach(meal => {
                 // Categorizar las comidas y guardarlas en el objeto
                 meal = meal.trim().replace("leche", "lacteo").replace("cereales", "cereal").replace("galletas", "cereal").replace("bizcocho", "cereal, lacteo, carne").replace("patatas", "cereal").replace("lentejas", "cereal").replace("conguitos", "cereal, lacteo").replace("manzana", "fruta").replace("yatekomo", "cereal").replace("queso", "lacteo").replace("pollo", "carne").replace("ambrosia", "cereal, lacteo").replace("pizza", "cereal, lacteo").replace("arroz", "cereal").replace("hamburguesas", "carne").replace("pure de patata", "cereal, lacteo").replace("tortilla francesa", "carne").replace("carne", "carne").replace("flan", "lacteo").replace("tortitas", "lacteo, carne, cereal").replace("merluza", "carne").replace("huevo", "carne").replace("tortilla de patata", "carne, cereal").replace("sopa", "carne").replace("bocartes", "carne").replace("copa de chocolate", "lacteo").replace("salmon", "carne").replace("bocadillo de nocilla", "cereal, lacteo").replace("bocadillo de queso", "cereal, lacteo").replace("pasta", "cereal, lacteo").replace("bocadillo de chocolate", "cereal, lacteo").replace("salchichas", "carne").replace("hamburguesa", "carne").replace("pure", "verdura").replace("garbanzos", "cereal").replace("alubias", "cereal").replace("croquetas", "cereales, lacteo").replace("gofre", "cereal").replace("chocolatina", "lacteo").replace("mikado", "lacteo, cereal").replace("empanada", "cereal, lacteo, carne").replace("flash", "cereal").replace("lubina", "carne").replace("variado", "cereal").replace("palomitas", "cereal").replace("", "")
-                meal = meal.replace("solomillo de cerdo", "carne").replace("natillas", "lacteo").replace("costilla", "carne").replace("rosquillas", "lacteo, cereal").replace("empanadillas", "carne, cereal").replace("lomo", "carne").replace("mikados", "cereal, lacteo").replace("sandwich", "cereal, lacteo, carne").replace("secreto", "carne").replace("albondigas", "carne").replace("chocolate", "lacteo").replace("nocilla", "lacteo").replace("browny", "lacteo, cereal").replace("couscous", "cereal, carne").replace("tarta", "lacteo, cereal").replace("orejas", "cereal").replace("sardinas", "carne").replace("torrijas", "lacteo, cereal").replace("jamon", "carne").replace("rabas", "carne").replace("solomillo", "carne").replace("atun", "carne").replace("calamares", "carne").replace("marmitaco", "carne, cereal").replace("pajarita", "cereal, lacteo").replace("chuleta", "carne").replace("donetes", "lacteo, cereal").replace("filetes", "carne").replace("melon", "fruta").replace("yogur", "lacteo").replace("cuscus", "cereal, carne").replace("helado", "lacteo").replace("pastelitos", "lacteo, cereal").replace("crema", "verdura").replace("petisuis", "lacteo").replace("almendras", "cereal").replace("macedonia", "fruta").replace("batido", "lacteo").replace("corbata", "cereal").replace("ensaimada", "cereal").replace("vinagreta", "cereal").replace("kit kat", "lacteo, cereal").replace("bolleria", "lacteo, cereal").replace("pinchos morunos", "carne").replace("ojitos", "carne").replace("sanjacobo", "cereal, lacteo, carne").replace("lechuga", "verdura").replace("", "")
-                meal = meal.replace("filloas", "cereal, lacteo").replace("nuggets", "cereal, carne").replace("filete empanado", "cereal, carne").replace("bonito", "carne").replace("castanas", "cereal").replace("", "")
+                meal = meal.replace("solomillo de cerdo", "carne").replace("natillas", "lacteo").replace("costilla", "carne").replace("rosquillas", "lacteo, cereal").replace("empanadillas", "carne, cereal").replace("lomo", "carne").replace("sandwich", "cereal, lacteo, carne").replace("secreto", "carne").replace("albondigas", "carne").replace("chocolate", "lacteo").replace("nocilla", "lacteo").replace("browny", "lacteo, cereal").replace("couscous", "cereal, carne").replace("tarta", "lacteo, cereal").replace("orejas", "cereal").replace("sardinas", "carne").replace("torrijas", "lacteo, cereal").replace("jamon", "carne").replace("rabas", "carne").replace("solomillo", "carne").replace("atun", "carne").replace("calamares", "carne").replace("marmitaco", "carne, cereal").replace("pajarita", "cereal, lacteo").replace("chuleta", "carne").replace("donetes", "lacteo, cereal").replace("filetes", "carne").replace("melon", "fruta").replace("yogur", "lacteo").replace("cuscus", "cereal, carne").replace("helado", "lacteo").replace("pastelitos", "lacteo, cereal").replace("crema", "verdura").replace("petisuis", "lacteo").replace("almendras", "cereal").replace("macedonia", "fruta").replace("batido", "lacteo").replace("corbata", "cereal").replace("ensaimada", "cereal").replace("vinagreta", "cereal").replace("kit kat", "lacteo, cereal").replace("bolleria", "lacteo, cereal").replace("pinchos morunos", "carne").replace("ojitos", "carne").replace("sanjacobo", "cereal, lacteo, carne").replace("lechuga", "verdura").replace("", "")
+                meal = meal.replace("filloas", "cereal, lacteo").replace("nuggets", "cereal, carne").replace("filete empanado", "cereal, carne").replace("bonito", "carne").replace("castanas", "cereal").replace("regalices", "lacteo").replace("cacahuetes", "cereal").replace("mandarina", "fruta").replace("quesada", "lacteo").replace("frutos secos", "cereal").replace("kitkat", "cereal, lacteo").replace("", "")
                 if (!meal.includes("lacteo") && !meal.includes("carne") && !meal.includes("cereal") && !meal.includes("verdura") && !meal.includes("fruta")){
-                    console.log("Este alimento está sin clasificar: " + meal);
+                    console.log("Este alimento del día " + csvContent[i].fecha + " está sin clasificar: " + meal);
                 }
                 dailyMeals = dailyMeals + ", " + meal + csvContent[i].fecha;
 
@@ -660,12 +882,92 @@ $(document).ready(function() {
         $('#charts-div').hide();
     });
 
-    // Mostrar graficas
+    // Mostrar categorias graficas
     $('#go-to-charts').click(function() {
         $('#charts-div').show();
         $('#charts-div').css('display', 'flex').css('flex-wrap', 'wrap');
         $('#medias-div').hide();
     });
+    
+    // Manejar todas las categorias
+        // Dormir
+        $('#go-to-chart-dormir').click(function() {
+            if (!$('#chartCategoriaDormirDiv').is(":hidden")) {
+                $('#chartCategoriaDormirDiv').hide();
+            }else{
+                $('#chartCategoriaDormirDiv').show();
+            }
+            $('#chartCategoriaComerDiv').hide();
+            $('#chartCategoriaCagarDiv').hide();
+            $('#chartCategoriaEjercicioDiv').hide();
+            $('#chartCategoriaPajasDiv').hide();
+            $('#chartCategoriaOtrosDiv').hide();
+        });
+        // Comer
+        $('#go-to-chart-comer').click(function() {
+            $('#chartCategoriaDormirDiv').hide();
+            if (!$('#chartCategoriaComerDiv').is(":hidden")) {
+                $('#chartCategoriaComerDiv').hide();
+            }else{
+                $('#chartCategoriaComerDiv').show();
+            }
+            $('#chartCategoriaCagarDiv').hide();
+            $('#chartCategoriaEjercicioDiv').hide();
+            $('#chartCategoriaPajasDiv').hide();
+            $('#chartCategoriaOtrosDiv').hide();
+        });
+        // Cagar
+        $('#go-to-chart-cagar').click(function() {
+            $('#chartCategoriaDormirDiv').hide();
+            $('#chartCategoriaComerDiv').hide();
+            if (!$('#chartCategoriaCagarDiv').is(":hidden")) {
+                $('#chartCategoriaCagarDiv').hide();
+            }else{
+                $('#chartCategoriaCagarDiv').show();
+            }
+            $('#chartCategoriaEjercicioDiv').hide();
+            $('#chartCategoriaPajasDiv').hide();
+            $('#chartCategoriaOtrosDiv').hide();
+        });
+        // Ejercicio
+        $('#go-to-chart-ejercicio').click(function() {
+            $('#chartCategoriaDormirDiv').hide();
+            $('#chartCategoriaComerDiv').hide();
+            $('#chartCategoriaCagarDiv').hide();
+            if (!$('#chartCategoriaEjercicioDiv').is(":hidden")) {
+                $('#chartCategoriaEjercicioDiv').hide();
+            }else{
+                $('#chartCategoriaEjercicioDiv').show();
+            }
+            $('#chartCategoriaPajasDiv').hide();
+            $('#chartCategoriaOtrosDiv').hide();
+        });
+        // Pajas
+        $('#go-to-chart-pajas').click(function() {
+            $('#chartCategoriaDormirDiv').hide();
+            $('#chartCategoriaComerDiv').hide();
+            $('#chartCategoriaCagarDiv').hide();
+            $('#chartCategoriaEjercicioDiv').hide();
+            if (!$('#chartCategoriaPajasDiv').is(":hidden")) {
+                $('#chartCategoriaPajasDiv').hide();
+            }else{
+                $('#chartCategoriaPajasDiv').show();
+            }
+            $('#chartCategoriaOtrosDiv').hide();
+        });
+        // Otros
+        $('#go-to-chart-otros').click(function() {
+            $('#chartCategoriaDormirDiv').hide();
+            $('#chartCategoriaComerDiv').hide();
+            $('#chartCategoriaCagarDiv').hide();
+            $('#chartCategoriaEjercicioDiv').hide();
+            $('#chartCategoriaPajasDiv').hide();
+            if (!$('#chartCategoriaOtrosDiv').is(":hidden")) {
+                $('#chartCategoriaOtrosDiv').hide();
+            }else{
+                $('#chartCategoriaOtrosDiv').show();
+            }
+        });
 
     // Volver al selector de acción
     $('#back-to-selector').click(function() {
@@ -1066,6 +1368,20 @@ $(document).ready(function() {
         }else{
             return false;
         }
+    }
+
+    function getWeekNumber(date) {
+        const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+
+        // Set to nearest Thursday (current date + 4 - current day number)
+        const dayNum = d.getUTCDay() || 7; 
+        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+
+        // January 1st of this year
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+
+        // Calculate full weeks to nearest Thursday
+        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
     }
 
     function aaa(cosa){
