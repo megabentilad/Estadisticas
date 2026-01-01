@@ -24,7 +24,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Vigesimonoveno");
+    console.log("Trigesimo");
     if (testing){
         console.log("MODO TESTING ACTIVADO");
     }
@@ -625,7 +625,7 @@ $(document).ready(function() {
                 // Categorizar las comidas y guardarlas en el objeto
                 meal = meal.trim().replace("leche", "lacteo").replace("cereales", "cereal").replace("galletas", "cereal").replace("bizcocho", "cereal, lacteo, carne").replace("patatas", "cereal").replace("lentejas", "cereal").replace("conguitos", "cereal, lacteo").replace("manzana", "fruta").replace("yatekomo", "cereal").replace("queso", "lacteo").replace("pollo", "carne").replace("ambrosia", "cereal, lacteo").replace("pizza", "cereal, lacteo").replace("arroz", "cereal").replace("hamburguesas", "carne").replace("pure de patata", "cereal, lacteo").replace("tortilla francesa", "carne").replace("carne", "carne").replace("flan", "lacteo").replace("tortitas", "lacteo, carne, cereal").replace("merluza", "carne").replace("huevo", "carne").replace("tortilla de patata", "carne, cereal").replace("sopa", "carne").replace("bocartes", "carne").replace("copa de chocolate", "lacteo").replace("salmon", "carne").replace("bocadillo de nocilla", "cereal, lacteo").replace("bocadillo de queso", "cereal, lacteo").replace("pasta", "cereal, lacteo").replace("bocadillo de chocolate", "cereal, lacteo").replace("salchichas", "carne").replace("hamburguesa", "carne").replace("pure", "verdura").replace("garbanzos", "cereal").replace("alubias", "cereal").replace("croquetas", "cereales, lacteo").replace("gofre", "cereal").replace("chocolatina", "lacteo").replace("mikado", "lacteo, cereal").replace("empanada", "cereal, lacteo, carne").replace("flash", "cereal").replace("lubina", "carne").replace("variado", "cereal").replace("palomitas", "cereal").replace("", "")
                 meal = meal.replace("solomillo de cerdo", "carne").replace("natillas", "lacteo").replace("costilla", "carne").replace("rosquillas", "lacteo, cereal").replace("empanadillas", "carne, cereal").replace("lomo", "carne").replace("sandwich", "cereal, lacteo, carne").replace("secreto", "carne").replace("albondigas", "carne").replace("chocolate", "lacteo").replace("nocilla", "lacteo").replace("browny", "lacteo, cereal").replace("couscous", "cereal, carne").replace("tarta", "lacteo, cereal").replace("orejas", "cereal").replace("sardinas", "carne").replace("torrijas", "lacteo, cereal").replace("jamon", "carne").replace("rabas", "carne").replace("solomillo", "carne").replace("atun", "carne").replace("calamares", "carne").replace("marmitaco", "carne, cereal").replace("pajarita", "cereal, lacteo").replace("chuleta", "carne").replace("donetes", "lacteo, cereal").replace("filetes", "carne").replace("melon", "fruta").replace("yogur", "lacteo").replace("cuscus", "cereal, carne").replace("helado", "lacteo").replace("pastelitos", "lacteo, cereal").replace("crema", "verdura").replace("petisuis", "lacteo").replace("almendras", "cereal").replace("macedonia", "fruta").replace("batido", "lacteo").replace("corbata", "cereal").replace("ensaimada", "cereal").replace("vinagreta", "cereal").replace("kit kat", "lacteo, cereal").replace("bolleria", "lacteo, cereal").replace("pinchos morunos", "carne").replace("ojitos", "carne").replace("sanjacobo", "cereal, lacteo, carne").replace("lechuga", "verdura").replace("", "")
-                meal = meal.replace("filloas", "cereal, lacteo").replace("nuggets", "cereal, carne").replace("filete empanado", "cereal, carne").replace("bonito", "carne").replace("castanas", "cereal").replace("regalices", "lacteo").replace("cacahuetes", "cereal").replace("mandarina", "fruta").replace("quesada", "lacteo").replace("frutos secos", "cereal").replace("kitkat", "cereal, lacteo").replace("", "")
+                meal = meal.replace("filloas", "cereal, lacteo").replace("nuggets", "cereal, carne").replace("filete empanado", "cereal, carne").replace("bonito", "carne").replace("castanas", "cereal").replace("regalices", "lacteo").replace("cacahuetes", "cereal").replace("mandarina", "fruta").replace("quesada", "lacteo").replace("frutos secos", "cereal").replace("kitkat", "cereal, lacteo").replace("polvoron", "lacteo, cereal").replace("oreo", "cereal").replace("panetone", "lacteo, cereal").replace("pavo", "carne").replace("turron", "lacteo, cereal").replace("napolitana", "cereal, lacteo").replace("batata", "cereal").replace("roscon", "lacteo, cereal").replace("durum", "carne, cereal, lacteo, verdura").replace("", "")
                 if (!meal.includes("lacteo") && !meal.includes("carne") && !meal.includes("cereal") && !meal.includes("verdura") && !meal.includes("fruta")){
                     console.log("Este alimento del día " + csvContent[i].fecha + " está sin clasificar: " + meal);
                 }
@@ -791,7 +791,7 @@ $(document).ready(function() {
         csvContent.forEach(rowData => {
             const $row = $("<tr></tr>"); // Create a new table row
             headers.forEach(header => {
-                const $cell = $("<td></td>").text(rowData[header] || ""); // Get cell data by key
+                var $cell = $("<td></td>").text(rowData[header] || ""); // Get cell data by key
                 $row.append($cell); // Append the cell to the row
             });
             $table.append($row); // Append the row to the table
@@ -1187,7 +1187,7 @@ $(document).ready(function() {
         // Comprobar el formato de los datos
         let horaRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
         let cagarRegex = /^\(\d{2}:\d{2}, \d{1,2}:\d{2}, \d{1,2}:\d{2}\)(, \(\d{2}:\d{2}, \d{1,2}:\d{2}, \d{1,2}:\d{2}\))*$/;
-        let pajasRegex = /^\(\d{2}:\d{2}, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z ]+\)(, \(\d{2}:\d{2}, [a-zA-Z]+, [a-zA-Z]+, [a-zA-Z ]+\))*$/;
+        let pajasRegex = /^\(\d{2}:\d{2}, [a-zA-Z]+, [a-zA-Z]+(?:, [a-zA-Z]+)?\)(, \(\d{2}:\d{2}, [a-zA-Z]+, [a-zA-Z]+(?:, [a-zA-Z]+)?\))*$/;
 
         if (!horaRegex.test(formDataObject.despertar)) {
             $('#despertar').addClass('error');
