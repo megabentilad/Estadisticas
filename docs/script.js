@@ -24,7 +24,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Trigesimo - 1");
+    console.log("Trigesimo - 2");
     if (testing){
         console.log("MODO TESTING ACTIVADO");
     }
@@ -1184,10 +1184,10 @@ $(document).ready(function() {
             formData.map(field => [field.name, field.value])
         );
 
-        // Comprobar el formato de los datos
+        // Comprobar el formato de los datos (Sí, están hechos con ChatGPT. Estás tú que voy a cocinarme ese pedazo de cacho de trozo de regex por mi cuenta)
         let horaRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
         let cagarRegex = /^\(\d{2}:\d{2}, \d{1,2}:\d{2}, \d{1,2}:\d{2}\)(, \(\d{2}:\d{2}, \d{1,2}:\d{2}, \d{1,2}:\d{2}\))*$/;
-        let pajasRegex = /^\((?:[01]\d|2[0-3]):[0-5]\d,\s*[A-Za-z]+,\s*[A-Za-z]+,\s*[A-Za-z]+(?:\s+[A-Za-z]+)*(?:,\s*[^)]+)?\)$/;
+        let pajasRegex = /^(?:\((?:[01]\d|2[0-3]):[0-5]\d, [A-Za-z]+, [A-Za-z]+, [A-Za-z]+(?: [A-Za-z]+)*(?:, [^ )][^)]+)?\)(?:, \((?:[01]\d|2[0-3]):[0-5]\d, [A-Za-z]+, [A-Za-z]+, [A-Za-z]+(?: [A-Za-z]+)*(?:, [^ )][^)]+)?\))*)?$/;
 
         if (!horaRegex.test(formDataObject.despertar)) {
             $('#despertar').addClass('error');
