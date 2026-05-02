@@ -215,10 +215,13 @@ th, td {
 
 .fullscreen {
     position: fixed;
-    margin: 0;
-    top: 5vh;
-    left: 5vw;
-    width: 90vw;
+    top: 45%;
+    left: 47.7%;
+    transform: translate(-50%, -50%);
+    /*margin: 0;
+    top: 5vh;*/
+    /*left: 5vw;*/
+    /*width: 90vw;*/
     height: 80vh;
     background: white;
     z-index: 9999;

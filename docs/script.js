@@ -24,9 +24,9 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Trigesimo - 2");
+    console.log("Trigesimo primero");
     if (testing){
-        console.log("MODO TESTING ACTIVADO");
+        console.log("-- MODO TESTING ACTIVADO --");
     }
     inicio();
     
@@ -186,7 +186,7 @@ $(document).ready(function() {
                 item.forEach(item2 => {
                     if (typeof item2[3] !== 'undefined'){
                         // Normalizar tipos
-                        var theme = item2[3].replace("lolicon", "loli").replace("shotacon", "shota").replace("zapping","ruido").replace("yuri","lesbianas").replace("yaoi", "gay").replace("bondage","bdsm").replace("homemade","casero").replace("crossdress","crossdressing").replace("cuck","NTR").replace("sumision","bdsm").replace("exterior","public").replace("cotidiano","vainilla").replace("cute","vainilla").replace("ntr", "NTR");
+                        var theme = item2[3].replace("lolicon", "loli").replace("shotacon", "shota").replace("zapping","ruido").replace("yuri","lesbianas").replace("yaoi", "gay").replace("bondage","bdsm").replace("homemade","casero").replace("crossdress","crossdressing").replace("cuck","NTR").replace("sumision","bdsm").replace("exterior","public").replace("cotidiano","vainilla").replace("cute","vainilla").replace("ntr", "NTR").replace("ruido", "ruido\n(Ir sin rumbo por la mente o scrollear sin nada definido)");
 
                         allThemesRepeated.push(theme);
                     }
@@ -267,8 +267,9 @@ $(document).ready(function() {
         var listaNumeroNormales = [];
         var listaNumeroLargas = [];
         var listaTotalSemana = [];
+        var listaTestigos = [];
 
-        for (let i = 1; i < csvContent.length; i++) {
+        for (let i = 0; i < csvContent.length; i++) {
             if (primerDiaSemana == ""){
                 primerDiaSemana = csvContent[i].fecha;
             }
@@ -303,24 +304,32 @@ $(document).ready(function() {
                 listaNumeroNormales.push(normalesSemana);
                 listaNumeroLargas.push(largasSemana);
                 listaTotalSemana.push(cortasSemana + normalesSemana + largasSemana);
-                marcadorSemana.push(semanaAnterior);
+                marcadorSemana.push(semanaAnterior.toString() + " - " + new Date(csvContent[i].fecha).getFullYear());
+                listaTestigos.push(1);
                 semanaAnterior = semanaActual;
                 cortasSemana = 0;
                 normalesSemana = 0;
                 largasSemana = 0;
 
                 ultimoDiaSemana = csvContent[i].fecha;
+                
                 diasCadaSemana.push(primerDiaSemana + " -> " + ultimoDiaSemana)
                 primerDiaSemana = "";
 
             }
         };
 
+
         new Chart("chartPajasSemanales", {
             type: "bar",
             data: {
                 labels: marcadorSemana,
                 datasets: [
+                {
+                    label: 'Testigo',
+                    data: listaTestigos,
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)'
+                },
                 {
                     label: 'Corta',
                     data: listaNumeroCortas,
@@ -347,9 +356,11 @@ $(document).ready(function() {
                     tooltip: {
                         callbacks: {
                           title: function (context) {
-                            var diasEstaSemana = diasCadaSemana[parseInt(context[0].label, 10) - 2];
-                            var totalSemana = listaTotalSemana[parseInt(context[0].label, 10) - 2]
-                            return `${totalSemana}\nSemana Nº${context[0].label} del año\n${diasEstaSemana}`;
+                            var diasEstaSemana = diasCadaSemana[context[0].dataIndex];
+                            //console.log(context)
+                            //var totalSemana = listaTotalSemana[parseInt(context[0].label, 10) - 2]
+                            var totalSemana = listaTotalSemana[context[0].dataIndex]
+                            return `${totalSemana} en total\nSemana Nº${context[0].label}\n${diasEstaSemana}`;
                           }
                         }
                     }
