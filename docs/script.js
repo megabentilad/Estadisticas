@@ -24,7 +24,7 @@ $(document).ready(function() {
     let csvContent = [];
 
     // Cargar el archivo CSV completo al inicio
-    console.log("Trigesimo primero");
+    console.log("Trigesimo segundo");
     if (testing){
         console.log("-- MODO TESTING ACTIVADO --");
     }
@@ -268,6 +268,13 @@ $(document).ready(function() {
         var listaNumeroLargas = [];
         var listaTotalSemana = [];
         var listaTestigos = [];
+        var rachaSinCum = 0;
+        var rachaMasLargaSinCum = 0;
+        var fechaFinRachaSinCum = "";
+        var rachaSinCumActiva = false;
+        var mensajeRachaSinCum = "";
+        var diaRepetido = false;
+
 
         for (let i = 0; i < csvContent.length; i++) {
             if (primerDiaSemana == ""){
@@ -278,8 +285,22 @@ $(document).ready(function() {
             var normalesHoy = 0;
             var largasHoy = 0;
             csvContent[i].pajas.split("),").forEach(paj => {
-                if (paj == ""){
-                    ++diasSinPaja;
+                if (!diaRepetido){
+                    if (paj == ""){
+                        ++diasSinPaja;
+                        ++rachaSinCum;
+                        if (((i + 1) == csvContent.length) && rachaSinCum > rachaMasLargaSinCum){
+                            rachaSinCumActiva = true;
+                            rachaMasLargaSinCum = rachaSinCum;
+                            fechaFinRachaSinCum = csvContent[i].fecha;
+                        }
+                    }else{
+                        if (rachaSinCum > rachaMasLargaSinCum){
+                            rachaMasLargaSinCum = rachaSinCum;
+                            fechaFinRachaSinCum = csvContent[i].fecha;
+                        }
+                        rachaSinCum = 0;
+                    }
                 }
                 paj = paj.replace("(","").replace(")","");
                 const elements = paj.split(",").map(x => x.trim());
@@ -299,7 +320,10 @@ $(document).ready(function() {
                 cortasSemana += cortasHoy;
                 normalesSemana += normalesHoy;
                 largasSemana += largasHoy;
+                diaRepetido = false;
             }else{
+                //Se resta 1 a i porque si no, el bucle ignoraría los lunes
+                --i;
                 listaNumeroCortas.push(cortasSemana);
                 listaNumeroNormales.push(normalesSemana);
                 listaNumeroLargas.push(largasSemana);
@@ -315,9 +339,17 @@ $(document).ready(function() {
                 
                 diasCadaSemana.push(primerDiaSemana + " -> " + ultimoDiaSemana)
                 primerDiaSemana = "";
+                diaRepetido = true;
 
             }
         };
+
+        var fechaInicioRachaSinCum = subtractDays(new Date(csvContent[csvContent.length - 1].fecha), rachaMasLargaSinCum - 1);
+        if (rachaSinCumActiva){
+            mensajeRachaSinCum = "<b>Racha más larga de abstinencia:</b> " + rachaMasLargaSinCum + ". En curso actualmente desde el " + fechaInicioRachaSinCum
+        }else[
+            mensajeRachaSinCum = "<b>Racha más larga de abstinencia:</b> " + rachaMasLargaSinCum + ". Desde el " + fechaInicioRachaSinCum + " hasta el " + fechaFinRachaSinCum
+        ]
 
 
         new Chart("chartPajasSemanales", {
@@ -393,6 +425,7 @@ $(document).ready(function() {
             <p><b>Media semanal:</b> ${Math.round(mediaSemanal * 100) / 100}</p>
             <p><b>Media diaria:</b> ${Math.round(mediaDiaria * 100) / 100}</p>
             <p><b>Media diaria (sin contar días de 0):</b> ${Math.round(mediaDiariaSelectiva * 100) / 100}</p>
+            <p>${mensajeRachaSinCum}</p>
         `);
 
         // Chart con las horas de sueño diarias
@@ -475,7 +508,7 @@ $(document).ready(function() {
                             if (festivos.includes(context.label)){
                                 otros = "Festivo"
                             }
-                            return [otros, Math.trunc(value*100)/100 + " horas -> " + hours + ":" + minutes];
+                            return [otros, Math.trunc(value*100)/100 + " horas -> " + hours + " horas y " + minutes + " minutos"];
                           },
                           title: function (context) {
                             const dia = getWeekDay(context[0].label);
@@ -540,16 +573,17 @@ $(document).ready(function() {
         xValues = [];
         yValues = [];
         var horasSueñoSemana = 0;
-        var semanaAnterior = getWeekNumber(new Date(csvContent[1].fecha))
+        var semanaAnterior = getWeekNumber(new Date(csvContent[4].fecha))
 
-        for (let i = 1; i < csvContent.length; i++) {
+        //Empezamos al inicio de la semana completa para evitar un pico feo al inicio de la gráfica
+        for (let i = 4; i < csvContent.length; i++) {
             var semanaActual = getWeekNumber(new Date(csvContent[i].fecha))
             var horasDormidasHoy = getTimeDifference(csvContent[i-1].dormir, csvContent[i].despertar)
             if (semanaActual == semanaAnterior){
                 horasSueñoSemana += horasDormidasHoy;
             }else{
                 yValues.push(horasSueñoSemana);
-                xValues.push(semanaAnterior);
+                xValues.push(semanaAnterior + " - " + new Date(csvContent[i].fecha).getFullYear());
                 semanaAnterior = semanaActual;
                 horasSueñoSemana = 0;
 
@@ -580,10 +614,11 @@ $(document).ready(function() {
                             const value = context.raw;
                             const hours = Math.trunc(context.raw);
                             const minutes = Math.trunc((context.raw - Math.trunc(context.raw)) * 60);
-                            return [Math.trunc(value*100)/100 + " horas -> " + hours + ":" + minutes];
+                            return [Math.trunc(value*100)/100 + " horas -> " + hours + " horas y " + minutes + " minutos"];
                           },
                           title: function (context) {
-                            return `Semana Nº${context[0].label} del año`;
+                            var diasEstaSemana = diasCadaSemana[context[0].dataIndex];
+                            return `Semana Nº${context[0].label}\n${diasEstaSemana}`;
                           }
                         }
                     }
@@ -1393,6 +1428,20 @@ $(document).ready(function() {
 
         // Calculate full weeks to nearest Thursday
         return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    }
+
+    function formatDateLocal(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    function subtractDays(date, days) {
+        const result = new Date(date);
+        result.setDate(result.getDate() - days);
+        return formatDateLocal(result);
     }
 
     function aaa(cosa){
